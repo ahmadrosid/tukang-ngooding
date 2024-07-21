@@ -20,7 +20,8 @@ const supportedExtensions = {
   'sql': 'SQL',
   'xml': 'XML',
   'yaml': 'YAML',
-  'sh': 'Shell'
+  'sh': 'Shell',
+  'svelte': 'Svelte',
 };
 
 export async function GET(request) {

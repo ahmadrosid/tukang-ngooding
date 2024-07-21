@@ -30,6 +30,7 @@
     "ai": "^3.2.32",
     "globby": "^14.0.2",
     "highlight.js": "^11.10.0",
+    "highlightjs-svelte": "^1.0.6",
     "lucide-svelte": "^0.412.0",
     "paneforge": "^0.0.5",
     "rehype-highlight": "^7.0.0",
