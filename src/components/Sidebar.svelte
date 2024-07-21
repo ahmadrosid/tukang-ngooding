@@ -2,6 +2,7 @@
   import { mapApiResponseToFileTree } from "$lib/file_utils";
   import { onMount } from "svelte";
   import { updateCode } from '../lib/code_store';
+  import ProjectList from './ProjectList.svelte';
 
   interface FileTreeItem {
     name: string;
@@ -12,8 +13,6 @@
 
   let isSidebarOpen: boolean = true;
   let currentProject: string = "Cody";
-  let newProjectName: string = "";
-  let isAddingProject: boolean = false;
   let fileTree: FileTreeItem[] = [];
 
   function toggleSidebar(): void {
@@ -47,27 +46,15 @@
     }
   }
 
-  function switchProject(project: string): void {
-    currentProject = project;
+  function switchProject(event: CustomEvent<string>): void {
+    currentProject = event.detail;
     fetchFileTree(); // Reload the file tree for the new project
   }
 
-  function startAddingProject(): void {
-    isAddingProject = true;
-    newProjectName = "";
-  }
-
-  function addProject(): void {
-    if (newProjectName.trim()) {
-      projects = [...projects, newProjectName.trim()];
-      switchProject(newProjectName.trim());
-      isAddingProject = false;
-    }
-  }
-
-  function cancelAddProject(): void {
-    isAddingProject = false;
-    newProjectName = "";
+  function addProject(event: CustomEvent<string>): void {
+    const newProjectName = event.detail;
+    projects = [...projects, newProjectName];
+    switchProject({ detail: newProjectName } as CustomEvent<string>);
   }
 
   async function openFile(file: FileTreeItem): Promise<void> {
@@ -156,51 +143,11 @@
     </nav>
   </div>
   <div class="mt-auto">
-    <h2 class="font-bold mb-2">Projects</h2>
-    <ul class="space-y-1">
-      {#each projects as project}
-        <li>
-          <button
-            class={`w-full text-sm text-left p-2 rounded border border-neutral-700 truncate ${
-              currentProject === project ? "bg-neutral-700" : "hover:bg-neutral-700"
-            }`}
-            on:click={() => switchProject(project)}
-          >
-            {project}
-          </button>
-        </li>
-      {/each}
-    </ul>
-    {#if isAddingProject}
-      <div class="mt-2">
-        <input
-          type="text"
-          bind:value={newProjectName}
-          placeholder="New project name"
-          class="w-full p-2 bg-neutral-700 rounded text-white"
-        />
-        <div class="flex justify-between mt-2">
-          <button
-            on:click={addProject}
-            class="px-2 py-1 bg-green-600 rounded hover:bg-green-700"
-          >
-            Add
-          </button>
-          <button
-            on:click={cancelAddProject}
-            class="px-2 py-1 bg-red-600 rounded hover:bg-red-700"
-          >
-            Cancel
-          </button>
-        </div>
-      </div>
-    {:else}
-      <button
-        on:click={startAddingProject}
-        class="w-full mt-2 p-2 bg-orange-700 rounded hover:bg-blue-700 text-sm"
-      >
-        Add Project
-      </button>
-    {/if}
+    <ProjectList
+      {projects}
+      {currentProject}
+      on:switchProject={switchProject}
+      on:addProject={addProject}
+    />
   </div>
 </aside>

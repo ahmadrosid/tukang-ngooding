@@ -11,7 +11,7 @@ export type CodeStoreType = {
 }
 
 export const codeStore = writable<CodeStoreType>({
-    code: 'console.log("Hello, world!");',
+    code: '// Your code will be here',
     language: 'typescript',
     path: 'main.ts',
     fileName: 'main.ts',
