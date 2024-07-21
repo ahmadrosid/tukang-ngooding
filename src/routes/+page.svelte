@@ -1,8 +1,10 @@
-<script>
+<script lang="ts">
   import { PaneGroup, Pane, PaneResizer } from "paneforge";
   import BaseLayout from "../components/BaseLayout.svelte";
   import ChatUI from "../components/ChatUI.svelte";
   import CodeEditor from "../components/CodeEditor.svelte";
+  import { codeStore, type CodeStoreType } from '../lib/code_store';
+  import { onMount } from "svelte";
 
   let leftSize = 50;
   let rightSize = 50;
@@ -17,6 +19,20 @@
       leftSize = 0;
       rightSize = 100;
     }
+  }
+
+  let codeValue: CodeStoreType;
+
+  onMount(() => {
+    const unsubscribe = codeStore.subscribe(value => {
+      codeValue = value;
+    });
+
+    return unsubscribe;
+  });
+
+  function handleCodeChange(event: CustomEvent<string>) {
+    codeStore.set({...codeValue, code: event.detail});
   }
 </script>
 
@@ -36,9 +52,10 @@
     <Pane defaultSize={rightSize}>
       <div class="h-full">
         <CodeEditor
-          language="typescript"
+          language={codeValue?.language || 'typescript'}
           theme="vs-dark"
-          value="console.log('Hello, world!');"
+          value={codeValue?.code || ''}
+          on:change={handleCodeChange}
         />
       </div>
     </Pane>
