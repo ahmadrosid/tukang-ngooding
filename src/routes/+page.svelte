@@ -36,6 +36,12 @@
   }
 </script>
 
+<svelte:head>
+	<title>Tukang Ngooding</title>
+	<meta name="robots" content="noindex nofollow" />
+</svelte:head>
+
+
 <BaseLayout>
   <PaneGroup direction="horizontal" class="w-full">
     {#if isLeftPaneVisible}

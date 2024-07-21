@@ -1,5 +1,8 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import { useChat } from '@ai-sdk/svelte';
+  import MessageItem from "./MessageItem.svelte";
+  const { input, handleSubmit, messages } = useChat();
 
   let sampleChat = [
     {
@@ -7,22 +10,6 @@
       role: "assistant",
     },
   ];
-
-  let messages = sampleChat;
-  let inputValue = "";
-
-  function handleSubmit() {
-    if (inputValue.trim()) {
-      messages = [...messages, { content: inputValue, role: "user" }];
-      inputValue = "";
-      setTimeout(() => {
-        messages = [
-          ...messages,
-          { content: "Hi, how can I help you today?", role: "assistant" },
-        ];
-      }, 1000);
-    }
-  }
 
   onMount(() => {
     const textarea = document.querySelector("textarea") as HTMLTextAreaElement;
@@ -37,25 +24,13 @@
 
 <div class="text-white text-sm">
   <div class="h-screen relative overflow-auto scrollbar-hide">
-    <div class="min-h-screen">
+    <div class="min-h-screen text-sm">
       <div class="max-w-4xl mx-auto w-full space-y-4 p-2 py-4">
-        {#each messages as message, index (index)}
-          <div>
-            <div class="gap-4 flex">
-              <div
-                class="bg-neutral-800 border border-neutral-700/20 rounded-2xl flex p-4 gap-3 shadow-sm"
-              >
-                {#if message.role === "user"}
-                  <div>
-                    <span class="p-1.5 text-sm rounded-full bg-purple-500">
-                      ME
-                    </span>
-                  </div>
-                {/if}
-                <div class="whitespace-pre-wrap">{message.content}</div>
-              </div>
-            </div>
-          </div>
+        {#each sampleChat as message}
+          <MessageItem {message} />
+        {/each}
+        {#each $messages as message}
+          <MessageItem {message} />
         {/each}
       </div>
     </div>
@@ -69,7 +44,7 @@
         >
           <textarea
             rows="2"
-            bind:value={inputValue}
+            bind:value={$input}
             placeholder="Type a message..."
             class="text-sm flex-grow bg-neutral-800 text-white px-2 py-1 focus:outline-none resize-none"
           />

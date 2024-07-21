@@ -103,12 +103,12 @@
   } md:translate-x-0`}
 >
   <div class="flex-grow">
-    <button on:click={toggleSidebar} class="font-bold p-2">
+    <button on:click={toggleSidebar} class="font-bold">
       <span class="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-violet-500">
-        Tukang Koding
+        Tukang Ngooding
       </span>
     </button>
-    <nav class="mt-2 text-sm w-[220px] max-h-[70vh] overflow-y-auto">
+    <nav class="mt-2 text-sm w-[220px] max-h-[80vh] overflow-y-auto scrollbar-hide">
       <ul class="space-y-1">
         {#each fileTree as item}
           <li>
@@ -124,7 +124,7 @@
               {#if item.isOpen && item.children}
                 <ul class="ml-4 mt-1 space-y-1">
                   {#each item.children as child}
-                    <li class="flex items-center p-2 hover:bg-neutral-700 rounded">
+                    <li class="flex items-center py-2 hover:bg-neutral-700 rounded cursor-pointer" on:click={() => openFile({...child, name: item.name + "/" + child.name})}>
                       <span class="mr-2">{child.type === "folder" ? "📁" : "📄"}</span>
                       <span>{child.name}</span>
                     </li>

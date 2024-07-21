@@ -24,9 +24,15 @@
   },
   "type": "module",
   "dependencies": {
+    "@ai-sdk/openai": "^0.0.37",
+    "@ai-sdk/svelte": "^0.0.19",
+    "ai": "^3.2.32",
     "globby": "^14.0.2",
+    "highlight.js": "^11.10.0",
     "lucide-svelte": "^0.412.0",
     "paneforge": "^0.0.5",
+    "rehype-highlight": "^7.0.0",
+    "svelte-exmarkdown": "^3.0.5",
     "svelte-monaco": "^0.4.0",
     "tailwind-scrollbar-hide": "^1.1.7"
   }
