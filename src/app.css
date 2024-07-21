@@ -7,7 +7,7 @@
 }
 
 .prose pre {
-    overflow: auto; /* Allows scrolling if content overflows */
-    white-space: pre-wrap; /* Wraps long lines */
-    word-wrap: break-word; /* Breaks long words */
+    overflow: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
 }

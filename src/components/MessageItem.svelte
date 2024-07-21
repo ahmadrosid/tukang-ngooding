@@ -2,13 +2,17 @@
   import Markdown, { type Plugin } from "svelte-exmarkdown";
   import { gfmPlugin } from "svelte-exmarkdown/gfm";
   import javascript from "highlight.js/lib/languages/javascript";
+  import typescript from "highlight.js/lib/languages/typescript";
+  import xml from "highlight.js/lib/languages/xml";
+  import go from "highlight.js/lib/languages/go";
+  import css from "highlight.js/lib/languages/css";
   import rehypeHighlight from "rehype-highlight";
   const plugins: Plugin[] = [
     gfmPlugin(),
     {
       rehypePlugin: [
         rehypeHighlight,
-        { ignoreMissing: true, languages: { javascript } },
+        { ignoreMissing: true, languages: { javascript, typescript, xml, go, css } },
       ],
     },
   ];
@@ -27,7 +31,7 @@
         {:else}
           <p class="text-purple-500">Tukang</p>
         {/if}
-        <div class="prose prose-sm prose-invert prose-pre:bg-neutral-900/50 prose-pre:rounded-md">
+        <div class="mt-1 prose prose-sm prose-invert prose-pre:bg-neutral-900/50 prose-pre:rounded-md">
           <Markdown md={message.content} {plugins} />
         </div>
       </div>
