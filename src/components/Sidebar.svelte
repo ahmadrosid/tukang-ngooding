@@ -121,7 +121,7 @@
         Tukang Koding
       </span>
     </button>
-    <nav class="mt-2 text-sm w-[200px] max-h-[70vh] overflow-y-auto">
+    <nav class="mt-2 text-sm w-[220px] max-h-[70vh] overflow-y-auto">
       <ul class="space-y-1">
         {#each fileTree as item}
           <li>
@@ -145,7 +145,7 @@
                 </ul>
               {/if}
             {:else}
-              <button role="button" class="flex items-center p-2 hover:bg-neutral-700 rounded cursor-pointer" on:click={() => openFile(item)}>
+              <button class="w-full flex items-center p-2 hover:bg-neutral-700 rounded cursor-pointer" on:click={() => openFile(item)}>
                 <span class="mr-2">📄</span>
                 <span>{item.name}</span>
               </button>
