@@ -46,7 +46,7 @@
   <PaneGroup direction="horizontal" class="w-full">
     {#if isLeftPaneVisible}
       <Pane defaultSize={leftSize}>
-        <div class="px-2">
+        <div class="px-4">
           <ChatUI />
         </div>
       </Pane>

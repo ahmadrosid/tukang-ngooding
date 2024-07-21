@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.hljs {
+    @apply bg-transparent
+}
+
+.prose pre {
+    overflow: auto; /* Allows scrolling if content overflows */
+    white-space: pre-wrap; /* Wraps long lines */
+    word-wrap: break-word; /* Breaks long words */
+}

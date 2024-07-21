@@ -1,16 +1,14 @@
 <script lang="ts">
-  import 'highlight.js/styles/github-dark.css';
-
   import Markdown, { type Plugin } from "svelte-exmarkdown";
   import { gfmPlugin } from "svelte-exmarkdown/gfm";
-  import typescript from "highlight.js/lib/languages/typescript";
+  import javascript from "highlight.js/lib/languages/javascript";
   import rehypeHighlight from "rehype-highlight";
   const plugins: Plugin[] = [
     gfmPlugin(),
     {
       rehypePlugin: [
         rehypeHighlight,
-        { ignoreMissing: true, languages: { typescript } },
+        { ignoreMissing: true, languages: { javascript } },
       ],
     },
   ];
@@ -19,17 +17,19 @@
 </script>
 
 <div>
-  <div class="gap-4 flex">
+  <div class="gap-4 flex font-sans">
     <div
-      class="bg-neutral-800 border border-neutral-700/20 rounded-2xl flex p-4 gap-3 shadow-sm"
+      class="bg-neutral-800 border border-neutral-700/20 rounded-2xl flex items-center py-4 gap-3 shadow-sm"
     >
-      {#if message.role === "user"}
-        <div>
-          <span class="p-1.5 text-sm rounded-full bg-purple-500"> ME </span>
+      <div class="px-4">
+        {#if message.role === "user"}
+          <p class="text-orange-500">You</p>
+        {:else}
+          <p class="text-purple-500">Tukang</p>
+        {/if}
+        <div class="prose prose-sm prose-invert prose-pre:bg-neutral-900/50 prose-pre:rounded-md">
+          <Markdown md={message.content} {plugins} />
         </div>
-      {/if}
-      <div class="space-y-4">
-        <Markdown md={message.content} {plugins} />
       </div>
     </div>
   </div>

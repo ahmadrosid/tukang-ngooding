@@ -1,8 +1,8 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { useChat } from '@ai-sdk/svelte';
+  import { useChat } from "@ai-sdk/svelte";
   import MessageItem from "./MessageItem.svelte";
-  const { input, handleSubmit, messages } = useChat();
+  const { input, handleSubmit, messages, stop, isLoading } = useChat();
 
   let sampleChat = [
     {
@@ -49,12 +49,22 @@
             class="text-sm flex-grow bg-neutral-800 text-white px-2 py-1 focus:outline-none resize-none"
           />
           <div>
-            <button
-              type="submit"
-              class="text-xs bg-orange-800 text-neutral-200 rounded-lg px-4 ml-1.5 py-2 transition-colors duration-300 ease-in-out hover:bg-orange-700 focus:outline-none"
-            >
-              Send
-            </button>
+            {#if !$isLoading}
+              <button
+                type="submit"
+                class="text-xs bg-orange-800 text-neutral-200 rounded-lg px-4 ml-1.5 py-2 transition-colors duration-300 ease-in-out hover:bg-orange-700 focus:outline-none"
+              >
+                Send
+              </button>
+            {:else}
+              <button
+                type="submit"
+                on:click={stop}
+                class="text-xs bg-orange-800 text-neutral-200 rounded-lg px-4 ml-1.5 py-2 transition-colors duration-300 ease-in-out hover:bg-orange-700 focus:outline-none"
+              >
+                Stop
+              </button>
+            {/if}
           </div>
         </div>
       </form>

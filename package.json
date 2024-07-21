@@ -26,6 +26,7 @@
   "dependencies": {
     "@ai-sdk/openai": "^0.0.37",
     "@ai-sdk/svelte": "^0.0.19",
+    "@tailwindcss/typography": "^0.5.13",
     "ai": "^3.2.32",
     "globby": "^14.0.2",
     "highlight.js": "^11.10.0",
