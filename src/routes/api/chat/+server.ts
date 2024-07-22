@@ -11,8 +11,6 @@ export const POST = (async ({ request }) => {
   const data = await request.json();
   const { messages } = data;
 
-  console.log(data)
-
   const result = await streamText({
     model: anthropic('claude-3-5-sonnet-20240620'),
     messages,

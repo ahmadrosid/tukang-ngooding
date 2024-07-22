@@ -3,7 +3,7 @@
   import BaseLayout from "../components/BaseLayout.svelte";
   import ChatUI from "../components/ChatUI.svelte";
   import CodeEditor from "../components/CodeEditor.svelte";
-  import { codeStore, type CodeStoreType } from '../lib/code_store';
+  import { codeStore, type CodeStoreType } from "../lib/code_store";
   import { onMount } from "svelte";
 
   let leftSize = 50;
@@ -13,7 +13,7 @@
   let codeValue: CodeStoreType;
 
   onMount(() => {
-    const unsubscribe = codeStore.subscribe(value => {
+    const unsubscribe = codeStore.subscribe((value) => {
       codeValue = value;
     });
 
@@ -21,28 +21,58 @@
   });
 
   function handleCodeChange(event: CustomEvent<string>) {
-    codeStore.set({...codeValue, code: event.detail});
+    codeStore.set({ ...codeValue, code: event.detail });
   }
 
   function getLanguage(value: CodeStoreType): string {
     if (value?.language) {
       switch (value.language.toLowerCase()) {
-        case 'svelte':
-          return 'html';
+        case "svelte":
+          return "html";
         default:
           return value.language.toLowerCase();
       }
     }
-    return 'typescript';
+    return "typescript";
   }
 
+  async function handleSave(code: string, path?: string) {
+    if (!path) {
+      return;
+    }
+    console.log("Saving file:", path);
+    const result = await updateFile(path, code);
+    console.log(result);
+  }
+
+  async function updateFile(filePath: string, content: string) {
+    try {
+      const response = await fetch("/api/files/update", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ filePath, content }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to update file");
+      }
+
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error("Error updating file:", error);
+      throw error;
+    }
+  }
 </script>
 
 <svelte:head>
-	<title>Tukang Ngooding</title>
-	<meta name="robots" content="noindex nofollow" />
+  <title>Tukang Ngooding</title>
+  <meta name="robots" content="noindex nofollow" />
 </svelte:head>
-
 
 <BaseLayout>
   <PaneGroup direction="horizontal" class="w-full">
@@ -54,16 +84,16 @@
       </Pane>
       <PaneResizer
         class="relative flex bg-neutral-800 w-[2px] items-center justify-center"
-      >
-      </PaneResizer>
+      ></PaneResizer>
     {/if}
     <Pane defaultSize={rightSize}>
       <div class="h-full">
         <CodeEditor
           language={getLanguage(codeValue)}
           theme="vs-dark"
-          value={codeValue?.code || ''}
+          value={codeValue?.code || ""}
           on:change={handleCodeChange}
+          on:save={async (event) => await handleSave(event.detail, codeValue?.path)}
         />
       </div>
     </Pane>

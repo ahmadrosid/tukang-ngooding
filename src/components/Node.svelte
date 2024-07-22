@@ -23,7 +23,7 @@
         updateCode({
           code: data.content || "",
           language: data.language.toLowerCase() || "typescript",
-          path: file.label,
+          path: file.fullPath || "",
           fileName: file.label,
           lastModified: new Date().toISOString(),
           size: 0,
