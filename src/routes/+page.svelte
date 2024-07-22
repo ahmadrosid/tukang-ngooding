@@ -24,17 +24,18 @@
     codeStore.set({...codeValue, code: event.detail});
   }
 
-  function getLanguage(): string {
-    if (codeValue?.language) {
-      switch (codeValue.language.toLowerCase()) {
+  function getLanguage(value: CodeStoreType): string {
+    if (value?.language) {
+      switch (value.language.toLowerCase()) {
         case 'svelte':
-          return 'xml';
+          return 'html';
         default:
-          return codeValue.language;
+          return value.language.toLowerCase();
       }
     }
     return 'typescript';
   }
+
 </script>
 
 <svelte:head>
@@ -59,7 +60,7 @@
     <Pane defaultSize={rightSize}>
       <div class="h-full">
         <CodeEditor
-          language={getLanguage()}
+          language={getLanguage(codeValue)}
           theme="vs-dark"
           value={codeValue?.code || ''}
           on:change={handleCodeChange}
