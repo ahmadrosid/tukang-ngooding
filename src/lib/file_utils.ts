@@ -25,7 +25,7 @@ export function transformToTreeNodes(data: InputData): TreeNode[] {
     let currentPath = '';
 
     parts.forEach((part, index) => {
-      currentPath += (index > 0 ? '/' : '') + part;
+      currentPath += (index > 0 ? '/' : '') + part.trim();
       const isLastPart = index === parts.length - 1;
       let childNode = currentNode.children?.find(child => child.label === part);
 

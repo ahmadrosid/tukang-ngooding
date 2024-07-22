@@ -8,6 +8,13 @@
     openFile(tree);
   };
 
+  function trimString(str: string, maxLength: number): string {
+      if (str.length <= maxLength) {
+          return str;
+      }
+      return str.slice(0, maxLength - 3) + '...';
+  }
+
   async function openFile(file: TreeNode): Promise<void> {
     if (!file.expanded) {
       try {
@@ -39,7 +46,7 @@
       >
         <span class="mr-2"> 📂 </span>
         <span>
-          {tree.label}
+          {trimString(tree.label, 20)}
         </span>
       </button>
       <div>
@@ -55,7 +62,7 @@
         class="w-full text-left hover:bg-neutral-700 rounded cursor-pointer p-2"
       >
         <span class="mr-2"> 📄 </span>
-        {tree.label}
+        {trimString(tree.label, 20)}
       </button>
     {/if}
   </li>

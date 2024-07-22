@@ -14,7 +14,7 @@
       const response = await fetch(`/api/files?folder=${folder}`);
       const data = await response.json();
       tree = {
-        label: "root",
+        label: "/Users/ahmadrosid/github.com/ahmadrosid/Products/TukangKoding",
         children: transformToTreeNodes(data),
         expanded: true,
       };
@@ -90,6 +90,6 @@
   });
 </script>
 
-<div class="py-2 -ml-4 text-sm">
+<div class="py-2 -ml-4 text-sm max-h-[70vh] overflow-y-auto scrollbar-hide">
   <Node {tree} on:toggle={rebuildTree} />
 </div>

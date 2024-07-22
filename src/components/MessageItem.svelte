@@ -27,7 +27,7 @@
     >
       <div class="px-4">
         {#if message.role === "user"}
-          <p class="text-orange-500">You</p>
+          <p class="text-orange-500 pb-1">You</p>
         {:else}
           <p class="text-purple-500">Tukang</p>
         {/if}

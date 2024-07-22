@@ -10,17 +10,6 @@
   let rightSize = 50;
   let isLeftPaneVisible = true;
 
-  function toggleLeftPane() {
-    isLeftPaneVisible = !isLeftPaneVisible;
-    if (isLeftPaneVisible) {
-      leftSize = 50;
-      rightSize = 50;
-    } else {
-      leftSize = 0;
-      rightSize = 100;
-    }
-  }
-
   let codeValue: CodeStoreType;
 
   onMount(() => {
@@ -33,6 +22,18 @@
 
   function handleCodeChange(event: CustomEvent<string>) {
     codeStore.set({...codeValue, code: event.detail});
+  }
+
+  function getLanguage(): string {
+    if (codeValue?.language) {
+      switch (codeValue.language.toLowerCase()) {
+        case 'svelte':
+          return 'xml';
+        default:
+          return codeValue.language;
+      }
+    }
+    return 'typescript';
   }
 </script>
 
@@ -58,7 +59,7 @@
     <Pane defaultSize={rightSize}>
       <div class="h-full">
         <CodeEditor
-          language={codeValue?.language || 'typescript'}
+          language={getLanguage()}
           theme="vs-dark"
           value={codeValue?.code || ''}
           on:change={handleCodeChange}
