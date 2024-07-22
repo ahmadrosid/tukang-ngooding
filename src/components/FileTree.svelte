@@ -1,139 +1,95 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import { updateCode } from "../lib/code_store";
-  import { mapApiResponseToFileTree } from "$lib/file_utils";
+  import { onMount } from 'svelte';
+  import Node from "./Node.svelte";
+  import { transformToTreeNodes, type TreeNode } from '$lib/file_utils';
 
-  interface FileTreeItem {
-    name: string;
-    type: "file" | "folder";
-    isOpen?: boolean;
-    children?: FileTreeItem[];
-  }
-
-  let fileTree: FileTreeItem[] = [];
+  let tree: TreeNode = {
+    label: "root",
+    children: [],
+    expanded: true,
+  };
 
   async function fetchFileTree(folder: string = "./"): Promise<void> {
     try {
       const response = await fetch(`/api/files?folder=${folder}`);
       const data = await response.json();
-      fileTree = mapApiResponseToFileTree(data);
+      tree = {
+        label: "root",
+        children: transformToTreeNodes(data),
+        expanded: true,
+      };
     } catch (error) {
       console.error("Error fetching file tree:", error);
     }
   }
 
-  async function toggleFolder(folder: FileTreeItem): Promise<void> {
-    if (folder.type === "folder") {
-      if (
-        !folder.isOpen &&
-        (!folder.children || folder.children.length === 0)
-      ) {
-        await fetchFileTree(folder.name);
-        const folderContents = fileTree.find(
-          (item) => item.name === folder.name
-        );
-        if (folderContents && folderContents.children) {
-          folder.children = folderContents.children;
-        }
+  const treeMap: { [key: string]: TreeNode } = {};
+
+  function initTreeMap(node: TreeNode): void {
+    if (node.children) {
+      for (const child of node.children) {
+        treeMap[child.label] = node;
+        initTreeMap(child);
       }
-      folder.isOpen = !folder.isOpen;
-      fileTree = [...fileTree];
+    }
+  }
+  initTreeMap(tree);
+
+  function rebuildChildren(node: TreeNode, checkAsParent: boolean = true): void {
+    if (node.children) {
+      for (const child of node.children) {
+        if (checkAsParent) child.checked = !!node.checked;
+        rebuildChildren(child, checkAsParent);
+      }
+      node.indeterminate =
+        node.children.some((c) => c.indeterminate) ||
+        (node.children.some((c) => !!c.checked) &&
+          node.children.some((c) => !c.checked));
     }
   }
 
-  async function openFile(file: FileTreeItem): Promise<void> {
-    if (file.type === "file") {
-      try {
-        const response = await fetch(`/api/files/fetch?file=${file.name}`);
-        const data = await response.json();
-        updateCode({
-          code: data.content || "",
-          language: data.language.toLowerCase() || "typescript",
-          path: file.name,
-          fileName: file.name,
-          lastModified: new Date().toISOString(),
-          size: 0,
-          isDirty: false,
-        });
-      } catch (error) {
-        console.error("Error fetching file content:", error);
-      }
-    }
+  interface ToggleEvent {
+    detail: {
+      node: TreeNode;
+    };
   }
+
+  function rebuildTree(e: ToggleEvent, checkAsParent: boolean = true): void {
+    const node = e.detail.node;
+    let parent = treeMap[node.label];
+    rebuildChildren(node, checkAsParent);
+    while (parent) {
+      const allCheck = parent.children?.every((c) => !!c.checked) ?? false;
+      if (allCheck) {
+        parent.indeterminate = false;
+        parent.checked = true;
+      } else {
+        const haveCheckedOrIndetermine = parent.children?.some(
+          (c) => !!c.checked || c.indeterminate
+        ) ?? false;
+        if (haveCheckedOrIndetermine) {
+          parent.indeterminate = true;
+        } else {
+          parent.indeterminate = false;
+        }
+        parent.checked = false;
+      }
+
+      parent = treeMap[parent.label];
+    }
+    tree = tree;
+    // see console the tree state when there's a state changed
+    // console.log(tree)
+  }
+
+  // init the tree state
+  rebuildTree({ detail: { node: tree } }, false);
 
   onMount(() => {
     fetchFileTree();
   });
 </script>
 
-<nav class="mt-2 text-sm w-[220px] max-h-[70vh] overflow-y-auto scrollbar-hide">
-  <ul class="space-y-1">
-    {#each fileTree as item}
-      <li>
-        {#if item.type === "folder"}
-          <button
-            class="flex items-center cursor-pointer hover:bg-neutral-700 p-2 rounded w-full"
-            on:click={() => toggleFolder(item)}
-          >
-            <span class="mr-2">{item.isOpen ? "📂" : "📁"}</span>
-            <span>{item.name}</span>
-          </button>
-          {#if item.isOpen && item.children}
-            <ul class="ml-4 mt-1 space-y-1">
-              {#each item.children as child}
-                <li>
-                  <button
-                    class="flex items-center py-2 hover:bg-neutral-700 rounded cursor-pointer w-full"
-                    on:click={() => {
-                      toggleFolder(child);
-                      openFile({
-                        ...child,
-                        name: `${item.name}/${child.name}`,
-                      });
-                    }}
-                  >
-                    <span class="mr-2"
-                      >{child.type === "folder" ? "📁" : "📄"}</span
-                    >
-                    <span>{child.name}</span>
-                  </button>
-                  {#if child.isOpen && child.children}
-                    <ul class="ml-4 mt-1 space-y-1">
-                      {#each child.children as childChildren}
-                        <li>
-                          <button
-                            class="flex text-left items-center py-2 hover:bg-neutral-700 rounded cursor-pointer w-full"
-                            on:click={() =>
-                              openFile({
-                                ...childChildren,
-                                name: `${item.name}/${child.name}/${childChildren.name}`,
-                              })}
-                          >
-                            <span class="mr-2"
-                              >{childChildren.type === "folder"
-                                ? "📁"
-                                : "📄"}</span
-                            >
-                            <span>{childChildren.name}</span>
-                          </button>
-                        </li>
-                      {/each}
-                    </ul>
-                  {/if}
-                </li>
-              {/each}
-            </ul>
-          {/if}
-        {:else}
-          <button
-            class="w-full flex items-center p-2 hover:bg-neutral-700 rounded cursor-pointer"
-            on:click={() => openFile(item)}
-          >
-            <span class="mr-2">📄</span>
-            <span>{item.name}</span>
-          </button>
-        {/if}
-      </li>
-    {/each}
-  </ul>
-</nav>
+<div class="py-2 -ml-4 text-sm">
+  <Node {tree} on:toggle={rebuildTree} />
+</div>

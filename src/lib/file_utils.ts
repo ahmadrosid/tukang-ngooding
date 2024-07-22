@@ -1,73 +1,75 @@
-interface FileTreeItem {
-  name: string;
-  type: "file" | "folder";
-  isOpen?: boolean;
-  children?: FileTreeItem[];
-}
-
-interface ApiResponseItem {
+interface FileData {
   name: string;
   type: string;
 }
 
-export function mapApiResponseToFileTree(apiResponse: {
-  files: ApiResponseItem[];
-}): FileTreeItem[] {
-  const fileTree: FileTreeItem[] = [];
-  const folderMap: { [key: string]: FileTreeItem } = {};
+interface InputData {
+  files: FileData[];
+}
 
-  const sortedItems = apiResponse.files.sort((a, b) => {
-    if (a.type === 'folder' && b.type !== 'folder') return -1;
-    if (a.type !== 'folder' && b.type === 'folder') return 1;
-    return a.name.localeCompare(b.name);
-  });
-  
-  // First pass: create all items and populate folderMap
-  sortedItems.forEach((item: ApiResponseItem) => {
-    const pathParts = item.name.split("/");
-    const fileName = pathParts.pop() || "";
-    const folderPath = pathParts.join("/");
+export interface TreeNode {
+  label: string;
+  fullPath?: string;
+  children?: TreeNode[];
+  checked?: boolean;
+  indeterminate?: boolean;
+  expanded?: boolean;
+}
 
-    const newItem: FileTreeItem = {
-      name: fileName,
-      type: item.type as "file" | "folder",
-      isOpen: false,
-      children: item.type === "folder" ? [] : undefined,
-    };
+export function transformToTreeNodes(data: InputData): TreeNode[] {
+  const root: TreeNode = { label: 'root', fullPath: '', children: [] };
 
-    if (folderPath) {
-      if (!folderMap[folderPath]) {
-        folderMap[folderPath] = {
-          name: folderPath,
-          type: "folder",
-          isOpen: false,
-          children: [],
-        };
+  data.files.forEach(file => {
+    const parts = file.name.split('/');
+    let currentNode = root;
+    let currentPath = '';
+
+    parts.forEach((part, index) => {
+      currentPath += (index > 0 ? '/' : '') + part;
+      const isLastPart = index === parts.length - 1;
+      let childNode = currentNode.children?.find(child => child.label === part);
+
+      if (!childNode) {
+        childNode = { label: part, fullPath: currentPath };
+        if (file.type === 'folder' || !isLastPart) {
+          childNode.children = [];
+        }
+        currentNode.children = currentNode.children || [];
+        currentNode.children.push(childNode);
       }
-      folderMap[folderPath].children?.push(newItem);
-    } else {
-      fileTree.push(newItem);
-    }
 
-    if (item.type === "folder") {
-      folderMap[item.name] = newItem;
-    }
+      currentNode = childNode;
+    });
   });
 
-  // Second pass: nest folders properly
-  Object.keys(folderMap).forEach((folderPath) => {
-    const pathParts = folderPath.split("/");
-    if (pathParts.length > 1) {
-      const parentFolderPath = pathParts.slice(0, -1).join("/");
-      const parentFolder = folderMap[parentFolderPath];
-      if (parentFolder && parentFolder.children) {
-        parentFolder.children = parentFolder.children.filter(
-          (child) => child.name !== pathParts[pathParts.length - 1]
-        );
-        parentFolder.children.push(folderMap[folderPath]);
+  // Helper function to sort nodes
+  const sortNodes = (nodes: TreeNode[]): TreeNode[] => {
+    return nodes.sort((a, b) => {
+      // If both are folders or both are files, sort alphabetically
+      if ((a.children && b.children) || (!a.children && !b.children)) {
+        return a.label.localeCompare(b.label);
       }
-    }
-  });
+      // If a is a folder and b is not, a comes first
+      if (a.children && !b.children) return -1;
+      // If b is a folder and a is not, b comes first
+      if (!a.children && b.children) return 1;
+      // This should never happen, but TypeScript likes it
+      return 0;
+    });
+  };
 
-  return fileTree; // Explicitly return the fileTree
+  // Recursive function to sort all levels
+  const sortRecursively = (node: TreeNode) => {
+    if (node.children) {
+      node.children = sortNodes(node.children);
+      node.children.forEach(sortRecursively);
+    }
+  };
+
+  // Sort the root children
+  root.children = sortNodes(root.children || []);
+  // Sort all other levels
+  root.children.forEach(sortRecursively);
+
+  return root.children || [];
 }
