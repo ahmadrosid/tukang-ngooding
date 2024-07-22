@@ -1,8 +1,14 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { useChat } from "@ai-sdk/svelte";
+  import { codeStore } from '../lib/code_store';
   import MessageItem from "./MessageItem.svelte";
-  const { input, handleSubmit, messages, stop, isLoading } = useChat();
+  const filePath = $codeStore?.path;
+  const { input, handleSubmit, messages, setMessages, stop, isLoading } = useChat({
+    body: {
+      file: filePath,
+    }
+  });
 
   let sampleChat = [
     {
@@ -20,6 +26,7 @@
       }
     });
   });
+
 </script>
 
 <div class="text-white text-sm">

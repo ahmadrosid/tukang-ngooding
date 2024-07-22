@@ -17,7 +17,6 @@
       const response = await fetch(`/api/files?folder=${folder}`);
       const data = await response.json();
       fileTree = mapApiResponseToFileTree(data);
-      console.log({ fileTree });
     } catch (error) {
       console.error("Error fetching file tree:", error);
     }
@@ -67,7 +66,7 @@
   });
 </script>
 
-<nav class="mt-2 text-sm w-[220px] max-h-[80vh] overflow-y-auto scrollbar-hide">
+<nav class="mt-2 text-sm w-[220px] max-h-[70vh] overflow-y-auto scrollbar-hide">
   <ul class="space-y-1">
     {#each fileTree as item}
       <li>
@@ -82,8 +81,7 @@
           {#if item.isOpen && item.children}
             <ul class="ml-4 mt-1 space-y-1">
               {#each item.children as child}
-                <li
-                >
+                <li>
                   <button
                     class="flex items-center py-2 hover:bg-neutral-700 rounded cursor-pointer w-full"
                     on:click={() => {
@@ -102,10 +100,9 @@
                   {#if child.isOpen && child.children}
                     <ul class="ml-4 mt-1 space-y-1">
                       {#each child.children as childChildren}
-                        <li
-                          class="flex items-center py-2 hover:bg-neutral-700 rounded cursor-pointer"
-                        >
+                        <li>
                           <button
+                            class="flex text-left items-center py-2 hover:bg-neutral-700 rounded cursor-pointer w-full"
                             on:click={() =>
                               openFile({
                                 ...childChildren,
