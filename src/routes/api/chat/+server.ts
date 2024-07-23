@@ -7,7 +7,6 @@ const anthropic = createAnthropic({
   apiKey: env.ANTHROPIC_API_KEY,
 });
 
-import { json } from "@sveltejs/kit";
 import path from "path";
 import { promises as fs } from "fs";
 
@@ -44,10 +43,7 @@ const getSystemMessage = async (filePath: string) => {
   }
 
   contents = await fs.readFile(fullPath, "utf-8");
-  return `Use the provided code to answer this question.
-Answer succinctly and provide code snippets if
-needed.
-
+  return `Use the provided code to answer this question. Answer succinctly and provide code snippets ifneeded.
 Use this format for code snippets:
 
 ===
