@@ -18,7 +18,7 @@
   async function openFile(file: TreeNode): Promise<void> {
     if (!file.expanded) {
       try {
-        const encodedFilePath = encodeURIComponent(file.fullPath);
+        const encodedFilePath = encodeURIComponent(file.fullPath || '');
         const response = await fetch(`/api/files/fetch?file=${encodedFilePath}`);
         const data = await response.json();
         updateCode({
