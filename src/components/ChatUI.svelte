@@ -63,6 +63,11 @@
   <div class="h-screen relative overflow-auto scrollbar-hide">
     <div class="min-h-screen text-sm">
       <div class="max-w-4xl mx-auto w-full space-y-4 p-2 py-4">
+        {#if filePath}
+          <div class="bg-transparent px-2 rounded-md mb-2 text-xs text-neutral-400">
+            Context file: <span class="font-semibold">{filePath}</span>
+          </div>
+      {/if}
         {#each $messages as message}
           <MessageItem {message} />
         {/each}
