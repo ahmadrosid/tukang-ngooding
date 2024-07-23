@@ -24,6 +24,7 @@
 	let displayedFiles: FileItem[] = allFiles;
 	let loading = true;
 	let searchInput: HTMLInputElement;
+	let selectedIndex = -1;
 
 	onMount(() => {
 		fetchFileTree().then(data => {
@@ -45,10 +46,12 @@
 		} else {
 			displayedFiles = fuse.search(searchQuery).map(result => result.item);
 		}
+		selectedIndex = -1;
 	}
   
-	function selectFile(file: FileItem): void {
+	function selectFile(file: FileItem, index: number): void {
 		selectedFile = file;
+		selectedIndex = index;
 	}
   
 	function confirmSelection(): void {
@@ -63,6 +66,23 @@
 		open = false;
 	}
 
+	function handleKeydown(event: KeyboardEvent) {
+		if (event.key === 'ArrowDown') {
+			event.preventDefault();
+			selectedIndex = (selectedIndex + 1) % displayedFiles.length;
+			selectedFile = displayedFiles[selectedIndex];
+		} else if (event.key === 'ArrowUp') {
+			event.preventDefault();
+			selectedIndex = (selectedIndex - 1 + displayedFiles.length) % displayedFiles.length;
+			selectedFile = displayedFiles[selectedIndex];
+		} else if (event.key === 'Enter') {
+			event.preventDefault();
+			if (selectedFile) {
+				confirmSelection();
+			}
+		}
+	}
+
 	$: {
 		if (searchQuery) {
 			handleSearch();
@@ -71,7 +91,6 @@
 		}
 	}
 
-	// New reactive statement to focus the input when 'open' changes
 	$: if (open && searchInput) {
 		setTimeout(() => searchInput.focus(), 0);
 	}
@@ -88,6 +107,7 @@
 				placeholder="Search files..." 
 				autocomplete="off"
 				bind:value={searchQuery}
+				on:keydown={handleKeydown}
 			/>
 		</div>
 		<div class="p-3 text-sm text-white h-[250px] overflow-y-auto">
@@ -103,12 +123,12 @@
 				</div>
 			{/if}
 			<ul class="space-y-2">
-				{#each displayedFiles as file}
+				{#each displayedFiles as file, index}
 					<li>
 						<button
-							on:click={() => selectFile(file)}
+							on:click={() => selectFile(file, index)}
 							class="w-full text-left p-2 rounded-md hover:bg-neutral-700 focus:outline-none text-sm"
-							class:bg-neutral-700={selectedFile === file}
+							class:bg-neutral-700={selectedIndex === index}
 						>
 							{file.name}
 						</button>

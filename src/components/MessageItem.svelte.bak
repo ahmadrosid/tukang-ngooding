@@ -31,7 +31,7 @@
         {#if message.role === "user"}
           <p class="text-orange-500">You</p>
         {:else}
-          <p class="text-purple-500">Tukang</p>
+          <p class="text-purple-500">Tukang's</p>
         {/if}
         <div class="mt-1 prose prose-sm prose-invert prose-pre:bg-neutral-900/75 prose-pre:rounded-md prose-pre:p-1">
           <Markdown md={message.content} {plugins} />

@@ -1,22 +1,18 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { onMount, afterUpdate } from "svelte";
   import { useChat } from "@ai-sdk/svelte";
   import MessageItem from "./MessageItem.svelte";
-  import { codeStore } from "$lib/code_store";
-
-  export let filePath = "";
+  
+  export let filePath: string;
+  
+  $: console.log("ChatUI re-rendered", {filePath});
+  
   let textareaElement: HTMLTextAreaElement;
-
-  onMount(() => {
-    const unsubscribe = codeStore.subscribe((value) => {
-      filePath = value.path;
-    });
-
-    return unsubscribe;
-  });
-
-  const { input, handleSubmit, messages, setMessages, stop, isLoading } =
-    useChat({
+  let chatInstance: ReturnType<typeof useChat>;
+  
+  $: {
+    // Re-initialize chat when filePath changes
+    chatInstance = useChat({
       body: {
         file: filePath,
       },
@@ -28,14 +24,17 @@
         },
       ],
     });
-
+  }
+  
+  $: ({ input, handleSubmit, messages, stop, isLoading } = chatInstance);
+  
   function autoResize() {
     if (textareaElement) {
       textareaElement.style.height = "auto";
       textareaElement.style.height = textareaElement.scrollHeight + "px";
     }
   }
-
+  
   onMount(() => {
     if (textareaElement) {
       textareaElement.addEventListener("keydown", (e) => {
@@ -48,15 +47,17 @@
       autoResize(); // Initial resize
     }
   });
-
+  
   function handleFileSelected(file: CustomEvent<{name: string, type: string}>) {
     console.log(file);
   }
-
+  
   $: if ($input) autoResize(); // Reactive statement to trigger resize when input changes
+  
+  afterUpdate(() => {
+    console.log("Chat updated with new filePath:", filePath);
+  });
 </script>
-
-<!-- <FileSelectDialog open={true} submitLabel="Add File" on:fileSelected={handleFileSelected} /> -->
 
 <div class="text-white text-sm">
   <div class="h-screen relative overflow-auto scrollbar-hide">

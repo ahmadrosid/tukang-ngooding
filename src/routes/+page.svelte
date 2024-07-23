@@ -4,25 +4,21 @@
   import ChatUI from "../components/ChatUI.svelte";
   import CodeEditor from "../components/CodeEditor.svelte";
   import { codeStore, updateCode, type CodeStoreType } from "../lib/code_store";
-  import { onMount } from "svelte";
   import FileSelectDialog from "../components/FileSelectDialog.svelte";
 
   let leftSize = 50;
   let rightSize = 50;
-  let isLeftPaneVisible = true;
 
   let codeValue: CodeStoreType;
+  let filePath = "";
 
-  onMount(() => {
-    const unsubscribe = codeStore.subscribe((value) => {
-      codeValue = value;
-    });
-
-    return unsubscribe;
-  });
+  $: {
+    codeValue = $codeStore;
+    filePath = codeValue?.path || "";
+  }
 
   function handleCodeChange(event: CustomEvent<string>) {
-    codeStore.set({ ...codeValue, code: event.detail });
+    updateCode({ ...codeValue, code: event.detail });
   }
 
   function getLanguage(value: CodeStoreType): string {
@@ -73,14 +69,15 @@
       const response = await fetch(`/api/files/fetch?file=${encodedFilePath}`);
       const data = await response.json();
       updateCode({
-        code: data.content,
+        code: data.content || "",
         language: data.language.toLowerCase() || "typescript",
-        path: file.name,
+        path: file.name || "",
         fileName: file.name,
         lastModified: new Date().toISOString(),
         size: 0,
         isDirty: false,
       });
+      console.log("File opened:", file.name);
     } catch (error) {
       console.error("Error fetching file content:", error);
     }
@@ -92,7 +89,6 @@
     file: CustomEvent<{ name: string; type: string }>
   ) {
     openFile(file.detail);
-    filePath = file.detail.name;
   }
 
   function handleKeydown(event: KeyboardEvent) {
@@ -101,8 +97,6 @@
       openFileDialog = true;
     }
   }
-
-  $: filePath = $codeStore.path || "";
 </script>
 
 <svelte:window on:keydown={handleKeydown} />
@@ -120,16 +114,14 @@
   />
 
   <PaneGroup direction="horizontal" class="w-full">
-    {#if isLeftPaneVisible}
-      <Pane defaultSize={leftSize}>
-        <div class="px-4">
-          <ChatUI {filePath} />
-        </div>
-      </Pane>
-      <PaneResizer
-        class="relative flex bg-neutral-800 w-[2px] items-center justify-center"
-      />
-    {/if}
+    <Pane defaultSize={leftSize}>
+      <div class="px-4">
+        <ChatUI {filePath} />
+      </div>
+    </Pane>
+    <PaneResizer
+      class="relative flex bg-neutral-800 w-[2px] items-center justify-center"
+    />
     <Pane defaultSize={rightSize}>
       <div class="h-full">
         <div class="p-2 text-sm">

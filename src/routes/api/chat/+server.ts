@@ -2,61 +2,21 @@ import { createAnthropic } from "@ai-sdk/anthropic";
 import { streamText, type CoreMessage } from "ai";
 import type { RequestHandler } from "./$types";
 import { env } from "$env/dynamic/private";
+import { getSystemMessage, updateFile } from "../../../lib/+serverUtils";
 
 const anthropic = createAnthropic({
   apiKey: env.ANTHROPIC_API_KEY,
 });
 
-import path from "path";
-import { promises as fs } from "fs";
-
-// List of supported file extensions and their corresponding languages
-const supportedExtensions = {
-  txt: "Plain Text",
-  js: "JavaScript",
-  ts: "TypeScript",
-  html: "HTML",
-  css: "CSS",
-  json: "JSON",
-  md: "Markdown",
-  py: "Python",
-  java: "Java",
-  c: "C",
-  cpp: "C++",
-  go: "Go",
-  rs: "Rust",
-  sql: "SQL",
-  xml: "XML",
-  yaml: "YAML",
-  sh: "Shell",
-  svelte: "Svelte",
-};
-
-const getSystemMessage = async (filePath: string) => {
-  let contents = "";
-  const fullPath = path.resolve(process.cwd(), filePath);
-  await fs.access(fullPath);
-  const extension = path.extname(fullPath).slice(1).toLowerCase();
-
-  if (!(extension in supportedExtensions)) {
-    throw new Error("Unsupported file type");
-  }
-
-  contents = await fs.readFile(fullPath, "utf-8");
-  return `Use the provided code to answer this question. Answer succinctly and provide code snippets ifneeded.
-Use this format for code snippets:
-
-===
-${filePath}
-\`\`\`
-${contents}
-\`\`\`
-===`;
-};
+function extractCodeSnippets(text: string): string[] {
+  // Implement your logic to extract code snippets from the text
+  // This is just a placeholder example
+  const regex = /```[\s\S]*?```/g;
+  return text.match(regex) || [];
+}
 
 export const POST = (async ({ request }) => {
   const data = await request.json();
-  console.log({file: data.file});
   const { messages } = data;
 
   let newMessages: CoreMessage[] = messages;
@@ -67,23 +27,38 @@ export const POST = (async ({ request }) => {
 
   if (data.file) {
     const systemMessage = await getSystemMessage(data.file);
-    newMessages = [
-      {
-        role: "system",
-        content: systemMessage,
+    const result = await streamText({
+      model: anthropic("claude-3-5-sonnet-20240620"),
+      system: systemMessage,
+      messages: newMessages,
+      onFinish: async ({ text }) => {
+        // Uncomment and add your logic here
+        console.log("Generated text:", text);
+        // You can process the text here, e.g., extract code snippets
+        const codeSnippets = extractCodeSnippets(text);
+        console.log("Extracted code snippets:", codeSnippets);
+
+        if (codeSnippets.length > 0) {
+          // Assuming the first code snippet is the one to update the file with
+          const codeToUpdate = codeSnippets[0]
+            .replace(/```[\s\S]*?\n/, "")
+            .replace(/\n```$/, "");
+          try {
+            await updateFile(data.file, codeToUpdate);
+            console.log("File updated successfully");
+          } catch (error) {
+            console.error("Error updating file:", error);
+          }
+        }
       },
-      ...messages,
-    ];
+    });
+
+    return result.toAIStreamResponse();
   }
 
-  console.log(newMessages);
-  
   const result = await streamText({
     model: anthropic("claude-3-5-sonnet-20240620"),
     messages: newMessages,
-    onFinish: ({ text }) => {
-      // console.log('finish', text);
-    },
   });
 
   return result.toAIStreamResponse();
