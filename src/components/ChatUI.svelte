@@ -1,21 +1,32 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { useChat } from "@ai-sdk/svelte";
-  import { codeStore } from '../lib/code_store';
   import MessageItem from "./MessageItem.svelte";
-  const filePath = $codeStore?.path;
-  const { input, handleSubmit, messages, setMessages, stop, isLoading } = useChat({
-    body: {
-      file: filePath,
-    }
+  import { codeStore } from "$lib/code_store";
+
+  let filePath = "";
+
+  onMount(() => {
+    const unsubscribe = codeStore.subscribe((value) => {
+      filePath = value.path;
+    });
+
+    return unsubscribe;
   });
 
-  let sampleChat = [
-    {
-      content: `Hi, it's Tukang Koding here! How can I help you today?`,
-      role: "assistant",
-    },
-  ];
+  const { input, handleSubmit, messages, setMessages, stop, isLoading } =
+    useChat({
+      body: {
+        file: filePath,
+      },
+      initialMessages: [
+        {
+          id: "1",
+          content: `Hi, it's Tukang Ngooding's here! How can I help you today?`,
+          role: "assistant",
+        },
+      ],
+    });
 
   onMount(() => {
     const textarea = document.querySelector("textarea") as HTMLTextAreaElement;
@@ -26,16 +37,12 @@
       }
     });
   });
-
 </script>
 
 <div class="text-white text-sm">
   <div class="h-screen relative overflow-auto scrollbar-hide">
     <div class="min-h-screen text-sm">
       <div class="max-w-4xl mx-auto w-full space-y-4 p-2 py-4">
-        {#each sampleChat as message}
-          <MessageItem {message} />
-        {/each}
         {#each $messages as message}
           <MessageItem {message} />
         {/each}

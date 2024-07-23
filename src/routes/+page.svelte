@@ -40,9 +40,7 @@
     if (!path) {
       return;
     }
-    console.log("Saving file:", path);
     const result = await updateFile(path, code);
-    console.log(result);
   }
 
   async function updateFile(filePath: string, content: string) {
@@ -88,6 +86,11 @@
     {/if}
     <Pane defaultSize={rightSize}>
       <div class="h-full">
+        <div class="p-2 text-sm">
+            <p>
+                {codeValue?.fileName}
+            </p>
+        </div>
         <CodeEditor
           language={getLanguage(codeValue)}
           theme="vs-dark"

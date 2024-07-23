@@ -18,7 +18,8 @@
   async function openFile(file: TreeNode): Promise<void> {
     if (!file.expanded) {
       try {
-        const response = await fetch(`/api/files/fetch?file=${file.fullPath}`);
+        const encodedFilePath = encodeURIComponent(file.fullPath);
+        const response = await fetch(`/api/files/fetch?file=${encodedFilePath}`);
         const data = await response.json();
         updateCode({
           code: data.content || "",
@@ -58,8 +59,8 @@
       </div>
     {:else}
       <button
-        on:click={() => openFile(tree)}
         class="w-full text-left hover:bg-neutral-700 rounded cursor-pointer p-2"
+        on:click={() => openFile(tree)}
       >
         <span class="mr-2"> 📄 </span>
         {trimString(tree.label, 20)}
