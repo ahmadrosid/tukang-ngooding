@@ -23,6 +23,7 @@
 	let fuse: Fuse<FileItem>;
 	let displayedFiles: FileItem[] = allFiles;
 	let loading = true;
+	let searchInput: HTMLInputElement;
 
 	onMount(() => {
 		fetchFileTree().then(data => {
@@ -69,12 +70,18 @@
 			displayedFiles = allFiles;
 		}
 	}
+
+	// New reactive statement to focus the input when 'open' changes
+	$: if (open && searchInput) {
+		setTimeout(() => searchInput.focus(), 0);
+	}
 </script>
 
 <div class:hidden={!open} class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-10">
 	<div class="bg-neutral-800 rounded-xl shadow-lg w-full max-w-xl ring-1 ring-neutral-700/70">
 		<div class="flex items-center justify-between border-b border-neutral-700">
 			<input 
+				bind:this={searchInput}
 				class="w-full p-4 focus:outline-none bg-transparent text-sm"
 				type="text" 
 				id="search_file" 
@@ -83,7 +90,7 @@
 				bind:value={searchQuery}
 			/>
 		</div>
-		<div class="p-3 text-sm h-[250px] overflow-y-auto">
+		<div class="p-3 text-sm text-white h-[250px] overflow-y-auto">
 			{#if loading}
 				<div class="flex justify-start items-center gap-3">
 					<div class="animate-spin rounded-full size-6 border-4 border-dashed border-neutral-400"></div>

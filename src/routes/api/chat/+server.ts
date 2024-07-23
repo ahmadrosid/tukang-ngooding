@@ -56,7 +56,7 @@ ${contents}
 
 export const POST = (async ({ request }) => {
   const data = await request.json();
-  console.log(data.file);
+  console.log({file: data.file});
   const { messages } = data;
 
   let newMessages: CoreMessage[] = messages;

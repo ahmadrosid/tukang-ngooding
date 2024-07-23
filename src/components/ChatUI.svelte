@@ -3,9 +3,8 @@
   import { useChat } from "@ai-sdk/svelte";
   import MessageItem from "./MessageItem.svelte";
   import { codeStore } from "$lib/code_store";
-  import FileSelectDialog from "./FileSelectDialog.svelte";
 
-  let filePath = "";
+  export let filePath = "";
   let textareaElement: HTMLTextAreaElement;
 
   onMount(() => {
@@ -43,6 +42,7 @@
         if (e.key === "Enter" && !e.shiftKey) {
           e.preventDefault();
           handleSubmit();
+          autoResize();
         }
       });
       autoResize(); // Initial resize

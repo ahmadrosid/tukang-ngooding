@@ -3,8 +3,9 @@
   import BaseLayout from "../components/BaseLayout.svelte";
   import ChatUI from "../components/ChatUI.svelte";
   import CodeEditor from "../components/CodeEditor.svelte";
-  import { codeStore, type CodeStoreType } from "../lib/code_store";
+  import { codeStore, updateCode, type CodeStoreType } from "../lib/code_store";
   import { onMount } from "svelte";
+  import FileSelectDialog from "../components/FileSelectDialog.svelte";
 
   let leftSize = 50;
   let rightSize = 50;
@@ -65,7 +66,46 @@
       throw error;
     }
   }
+
+  async function openFile(file: { name: string; type: string }): Promise<void> {
+    try {
+      const encodedFilePath = encodeURIComponent(file.name);
+      const response = await fetch(`/api/files/fetch?file=${encodedFilePath}`);
+      const data = await response.json();
+      updateCode({
+        code: data.content,
+        language: data.language.toLowerCase() || "typescript",
+        path: file.name,
+        fileName: file.name,
+        lastModified: new Date().toISOString(),
+        size: 0,
+        isDirty: false,
+      });
+    } catch (error) {
+      console.error("Error fetching file content:", error);
+    }
+  }
+
+  let openFileDialog: boolean = false;
+
+  function handleFileSelected(
+    file: CustomEvent<{ name: string; type: string }>
+  ) {
+    openFile(file.detail);
+    filePath = file.detail.name;
+  }
+
+  function handleKeydown(event: KeyboardEvent) {
+    if (event.key === "j" && (event.metaKey || event.ctrlKey)) {
+      event.preventDefault();
+      openFileDialog = true;
+    }
+  }
+
+  $: filePath = $codeStore.path || "";
 </script>
+
+<svelte:window on:keydown={handleKeydown} />
 
 <svelte:head>
   <title>Tukang Ngooding</title>
@@ -73,30 +113,37 @@
 </svelte:head>
 
 <BaseLayout>
+  <FileSelectDialog
+    open={openFileDialog}
+    submitLabel="Open File"
+    on:fileSelected={handleFileSelected}
+  />
+
   <PaneGroup direction="horizontal" class="w-full">
     {#if isLeftPaneVisible}
       <Pane defaultSize={leftSize}>
         <div class="px-4">
-          <ChatUI />
+          <ChatUI {filePath} />
         </div>
       </Pane>
       <PaneResizer
         class="relative flex bg-neutral-800 w-[2px] items-center justify-center"
-      ></PaneResizer>
+      />
     {/if}
     <Pane defaultSize={rightSize}>
       <div class="h-full">
         <div class="p-2 text-sm">
-            <p>
-                {codeValue?.fileName}
-            </p>
+          <p>
+            {codeValue?.fileName}
+          </p>
         </div>
         <CodeEditor
           language={getLanguage(codeValue)}
           theme="vs-dark"
           value={codeValue?.code || ""}
           on:change={handleCodeChange}
-          on:save={async (event) => await handleSave(event.detail, codeValue?.path)}
+          on:save={async (event) =>
+            await handleSave(event.detail, codeValue?.path)}
         />
       </div>
     </Pane>
