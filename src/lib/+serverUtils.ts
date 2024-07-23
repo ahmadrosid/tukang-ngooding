@@ -76,7 +76,7 @@ export async function updateFile(filePath: string, content: string): Promise<voi
     } else {
       console.log(`File ${filePath} content unchanged. No update needed.`);
     }
-  } catch (error) {
+  } catch (error: any) {
     if (error.code === 'ENOENT') {
       console.error(`File ${filePath} does not exist.`);
     } else {
