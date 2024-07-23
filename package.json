@@ -30,6 +30,7 @@
     "@tailwindcss/typography": "^0.5.13",
     "@types/node": "^20.14.11",
     "ai": "^3.2.32",
+    "fuse.js": "^7.0.0",
     "globby": "^14.0.2",
     "highlight.js": "^11.10.0",
     "highlightjs-svelte": "^1.0.6",

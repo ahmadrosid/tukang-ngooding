@@ -2,26 +2,13 @@
   import { onMount } from 'svelte';
   import Node from "./Node.svelte";
   import { transformToTreeNodes, type TreeNode } from '$lib/file_utils';
+  import { fetchFileTree } from '$lib/api';
 
   let tree: TreeNode = {
     label: "root",
     children: [],
     expanded: true,
   };
-
-  async function fetchFileTree(folder: string = "./"): Promise<void> {
-    try {
-      const response = await fetch(`/api/files?folder=${folder}`);
-      const data = await response.json();
-      tree = {
-        label: "/Users/ahmadrosid/github.com/ahmadrosid/Products/TukangKoding",
-        children: transformToTreeNodes(data),
-        expanded: true,
-      };
-    } catch (error) {
-      console.error("Error fetching file tree:", error);
-    }
-  }
 
   const treeMap: { [key: string]: TreeNode } = {};
 
@@ -78,15 +65,20 @@
       parent = treeMap[parent.label];
     }
     tree = tree;
-    // see console the tree state when there's a state changed
-    // console.log(tree)
   }
 
   // init the tree state
   rebuildTree({ detail: { node: tree } }, false);
 
-  onMount(() => {
-    fetchFileTree();
+  onMount(async () => {
+    const result = await fetchFileTree();
+    if (result) {
+      tree = {
+        label: "/Users/ahmadrosid/github.com/ahmadrosid/Products/TukangKoding",
+        children: transformToTreeNodes(result),
+        expanded: true,
+      };
+    }
   });
 </script>
 

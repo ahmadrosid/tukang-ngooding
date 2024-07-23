@@ -3,8 +3,10 @@
   import { useChat } from "@ai-sdk/svelte";
   import MessageItem from "./MessageItem.svelte";
   import { codeStore } from "$lib/code_store";
+  import FileSelectDialog from "./FileSelectDialog.svelte";
 
   let filePath = "";
+  let textareaElement: HTMLTextAreaElement;
 
   onMount(() => {
     const unsubscribe = codeStore.subscribe((value) => {
@@ -28,16 +30,33 @@
       ],
     });
 
+  function autoResize() {
+    if (textareaElement) {
+      textareaElement.style.height = "auto";
+      textareaElement.style.height = textareaElement.scrollHeight + "px";
+    }
+  }
+
   onMount(() => {
-    const textarea = document.querySelector("textarea") as HTMLTextAreaElement;
-    textarea.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        handleSubmit();
-      }
-    });
+    if (textareaElement) {
+      textareaElement.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          handleSubmit();
+        }
+      });
+      autoResize(); // Initial resize
+    }
   });
+
+  function handleFileSelected(file: CustomEvent<{name: string, type: string}>) {
+    console.log(file);
+  }
+
+  $: if ($input) autoResize(); // Reactive statement to trigger resize when input changes
 </script>
+
+<!-- <FileSelectDialog open={true} submitLabel="Add File" on:fileSelected={handleFileSelected} /> -->
 
 <div class="text-white text-sm">
   <div class="h-screen relative overflow-auto scrollbar-hide">
@@ -57,10 +76,11 @@
           class="flex p-3 pb-6 bg-neutral-800 rounded-t-xl border border-neutral-700/60 w-full"
         >
           <textarea
-            rows="2"
+            bind:this={textareaElement}
             bind:value={$input}
+            on:input={autoResize}
             placeholder="Type a message..."
-            class="text-sm flex-grow bg-neutral-800 text-white px-2 py-1 focus:outline-none resize-none"
+            class="text-sm flex-grow bg-neutral-800 text-white px-2 py-1 focus:outline-none resize-none overflow-y-scrool max-h-[300px]"
           />
           <div>
             {#if !$isLoading}
@@ -72,7 +92,7 @@
               </button>
             {:else}
               <button
-                type="submit"
+                type="button"
                 on:click={stop}
                 class="text-xs bg-orange-800 text-neutral-200 rounded-lg px-4 ml-1.5 py-2 transition-colors duration-300 ease-in-out hover:bg-orange-700 focus:outline-none"
               >
