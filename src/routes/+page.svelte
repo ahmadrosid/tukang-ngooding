@@ -77,7 +77,6 @@
         size: 0,
         isDirty: false,
       });
-      console.log("File opened:", file.name);
     } catch (error) {
       console.error("Error fetching file content:", error);
     }

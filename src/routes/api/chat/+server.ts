@@ -43,12 +43,12 @@ export const POST = (async ({ request }) => {
           const codeToUpdate = codeSnippets[0]
             .replace(/```[\s\S]*?\n/, "")
             .replace(/\n```$/, "");
-          try {
-            await updateFile(data.file, codeToUpdate);
-            console.log("File updated successfully");
-          } catch (error) {
-            console.error("Error updating file:", error);
-          }
+          // try {
+          //   await updateFile(data.file, codeToUpdate);
+          //   console.log("File updated successfully");
+          // } catch (error) {
+          //   console.error("Error updating file:", error);
+          // }
         }
       },
     });

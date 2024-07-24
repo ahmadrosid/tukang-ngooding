@@ -43,7 +43,7 @@ ${contents}
 \`\`\`
 ===
 
-When user asking for code, give them the full code.
+When user asking for code, give the diff of the code changes you made.
 `;
 }
 

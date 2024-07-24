@@ -5,8 +5,6 @@
   
   export let filePath: string;
   
-  $: console.log("ChatUI re-rendered", {filePath});
-  
   let textareaElement: HTMLTextAreaElement;
   let chatInstance: ReturnType<typeof useChat>;
   
@@ -47,16 +45,8 @@
       autoResize(); // Initial resize
     }
   });
-  
-  function handleFileSelected(file: CustomEvent<{name: string, type: string}>) {
-    console.log(file);
-  }
-  
-  $: if ($input) autoResize(); // Reactive statement to trigger resize when input changes
-  
-  afterUpdate(() => {
-    console.log("Chat updated with new filePath:", filePath);
-  });
+
+  $: if ($input) autoResize();
 </script>
 
 <div class="text-white text-sm">
@@ -64,10 +54,10 @@
     <div class="min-h-screen text-sm">
       <div class="max-w-4xl mx-auto w-full space-y-4 p-2 py-4">
         {#if filePath}
-          <div class="bg-transparent px-2 rounded-md mb-2 text-xs text-neutral-400">
+          <div class="p-2 text-xs text-neutral-400 sticky top-0 bg-neutral-900">
             Context file: <span class="font-semibold">{filePath}</span>
           </div>
-      {/if}
+        {/if}
         {#each $messages as message}
           <MessageItem {message} />
         {/each}
