@@ -43,8 +43,7 @@ ${contents}
 \`\`\`
 ===
 
-When user asking for code, give the diff of the code changes you made.
-`;
+When user asking for code, give them the full code.`;
 }
 
 export async function updateFile(filePath: string, content: string): Promise<void> {

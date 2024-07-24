@@ -2,12 +2,12 @@
   import { onMount, afterUpdate } from "svelte";
   import { useChat } from "@ai-sdk/svelte";
   import MessageItem from "./MessageItem.svelte";
-  
+
   export let filePath: string;
-  
+
   let textareaElement: HTMLTextAreaElement;
   let chatInstance: ReturnType<typeof useChat>;
-  
+
   $: {
     // Re-initialize chat when filePath changes
     chatInstance = useChat({
@@ -23,16 +23,16 @@
       ],
     });
   }
-  
+
   $: ({ input, handleSubmit, messages, stop, isLoading } = chatInstance);
-  
+
   function autoResize() {
     if (textareaElement) {
       textareaElement.style.height = "auto";
       textareaElement.style.height = textareaElement.scrollHeight + "px";
     }
   }
-  
+
   onMount(() => {
     if (textareaElement) {
       textareaElement.addEventListener("keydown", (e) => {

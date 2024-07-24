@@ -96,7 +96,7 @@
 	}
 </script>
 
-<div class:hidden={!open} class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-10">
+<div class:hidden={!open} class:fixed={open} class="inset-0 bg-black bg-opacity-50 flex items-center justify-center z-10">
 	<div class="bg-neutral-800 rounded-xl shadow-lg w-full max-w-xl ring-1 ring-neutral-700/70">
 		<div class="flex items-center justify-between border-b border-neutral-700">
 			<input 
@@ -110,7 +110,7 @@
 				on:keydown={handleKeydown}
 			/>
 		</div>
-		<div class="p-3 text-sm text-white h-[250px] overflow-y-auto">
+		<div class="p-3 text-sm text-white h-[250px] overflow-y-auto scrollbar-hide">
 			{#if loading}
 				<div class="flex justify-start items-center gap-3">
 					<div class="animate-spin rounded-full size-6 border-4 border-dashed border-neutral-400"></div>

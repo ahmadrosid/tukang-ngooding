@@ -4,7 +4,6 @@
   import ChatUI from "../components/ChatUI.svelte";
   import CodeEditor from "../components/CodeEditor.svelte";
   import { codeStore, updateCode, type CodeStoreType } from "../lib/code_store";
-  import FileSelectDialog from "../components/FileSelectDialog.svelte";
 
   let leftSize = 50;
   let rightSize = 50;
@@ -62,43 +61,7 @@
       throw error;
     }
   }
-
-  async function openFile(file: { name: string; type: string }): Promise<void> {
-    try {
-      const encodedFilePath = encodeURIComponent(file.name);
-      const response = await fetch(`/api/files/fetch?file=${encodedFilePath}`);
-      const data = await response.json();
-      updateCode({
-        code: data.content || "",
-        language: data.language.toLowerCase() || "typescript",
-        path: file.name || "",
-        fileName: file.name,
-        lastModified: new Date().toISOString(),
-        size: 0,
-        isDirty: false,
-      });
-    } catch (error) {
-      console.error("Error fetching file content:", error);
-    }
-  }
-
-  let openFileDialog: boolean = false;
-
-  function handleFileSelected(
-    file: CustomEvent<{ name: string; type: string }>
-  ) {
-    openFile(file.detail);
-  }
-
-  function handleKeydown(event: KeyboardEvent) {
-    if (event.key === "j" && (event.metaKey || event.ctrlKey)) {
-      event.preventDefault();
-      openFileDialog = true;
-    }
-  }
 </script>
-
-<svelte:window on:keydown={handleKeydown} />
 
 <svelte:head>
   <title>Tukang Ngooding</title>
@@ -106,12 +69,6 @@
 </svelte:head>
 
 <BaseLayout>
-  <FileSelectDialog
-    open={openFileDialog}
-    submitLabel="Open File"
-    on:fileSelected={handleFileSelected}
-  />
-
   <PaneGroup direction="horizontal" class="w-full">
     <Pane defaultSize={leftSize}>
       <div class="px-4">
