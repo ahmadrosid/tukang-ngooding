@@ -1,6 +1,9 @@
 import { json } from "@sveltejs/kit";
 import path from "path";
 import { promises as fs } from "fs";
+import { env } from "$env/dynamic/private";
+
+const currentDirectory: string = env.CURRENT_DIRECTORY || "";
 
 export async function PUT({ request }) {
     const body = await request.json();
@@ -14,7 +17,7 @@ export async function PUT({ request }) {
     }
   
     try {
-      const fullPath = path.resolve(process.cwd(), filePath);
+      const fullPath = path.resolve(currentDirectory, filePath);
       await fs.access(fullPath);
       const extension = path.extname(fullPath).slice(1).toLowerCase();
       await fs.writeFile(fullPath, content, "utf-8");

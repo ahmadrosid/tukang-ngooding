@@ -1,5 +1,6 @@
 import path from "path";
 import { promises as fs } from "fs";
+import { env } from "$env/dynamic/private";
 
 const supportedExtensions: Record<string, string> = {
   txt: "Plain Text",
@@ -20,10 +21,13 @@ const supportedExtensions: Record<string, string> = {
   yaml: "YAML",
   sh: "Shell",
   svelte: "Svelte",
+  php: "PHP",
 };
 
+const currentDirectory: string = env.CURRENT_DIRECTORY || "";
+
 export async function getSystemMessage(filePath: string): Promise<string> {
-  const fullPath = path.resolve(process.cwd(), filePath);
+  const fullPath = path.resolve(currentDirectory, filePath);
   await fs.access(fullPath);
   const extension = path.extname(fullPath).slice(1).toLowerCase();
 
@@ -49,7 +53,7 @@ When user asking for code, give them the full code.`;
 export async function updateFile(filePath: string, content: string): Promise<void> {
   try {
     // Resolve the full path
-    const fullPath = path.resolve(process.cwd(), filePath);
+    const fullPath = path.resolve(currentDirectory, filePath);
 
     // Validate the file path
     if (!isValidFilePath(fullPath)) {
@@ -87,7 +91,7 @@ export async function updateFile(filePath: string, content: string): Promise<voi
 
 function isValidFilePath(fullPath: string): boolean {
   // Define the allowed directory (e.g., your project root)
-  const allowedDirectory = process.cwd();
+  const allowedDirectory = currentDirectory;
 
   // Check if the file path is within the allowed directory
   if (!fullPath.startsWith(allowedDirectory)) {

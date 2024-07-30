@@ -1,6 +1,9 @@
 import { json } from "@sveltejs/kit";
 import path from "path";
 import { promises as fs } from "fs";
+import { env } from "$env/dynamic/private";
+
+const currentDirectory: string = env.CURRENT_DIRECTORY || "";
 
 // List of supported file extensions and their corresponding languages
 const supportedExtensions = {
@@ -22,6 +25,7 @@ const supportedExtensions = {
   'yaml': 'YAML',
   'sh': 'Shell',
   'svelte': 'Svelte',
+  'php': 'PHP',
 };
 
 export async function GET(request) {
@@ -36,7 +40,7 @@ export async function GET(request) {
   }
 
   try {
-    const fullPath = path.resolve(process.cwd(), filePath);
+    const fullPath = path.resolve(currentDirectory, filePath);
     
     // Check if the file exists
     await fs.access(fullPath);
