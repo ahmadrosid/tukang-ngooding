@@ -33,7 +33,7 @@
         {:else}
           <p class="text-purple-500">Tukang</p>
         {/if}
-        <div class="mt-1 prose prose-sm prose-invert prose-pre:bg-neutral-900/75 prose-pre:rounded-md prose-pre:p-1">
+        <div class="mt-1 prose prose-sm prose-invert prose-pre:bg-neutral-900/75 prose-pre:rounded-md prose-pre:p-1 max-w-full">
           <Markdown md={message.content} {plugins} />
         </div>
       </div>
