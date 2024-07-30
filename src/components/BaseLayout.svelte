@@ -23,34 +23,11 @@
     }
   }
 
-  let openFileDialog = false;
-
   function handleFileSelected(
     file: CustomEvent<{ name: string; type: string }>
   ) {
     openFile(file.detail);
   }
-
-  function handleKeydown(event: KeyboardEvent) {
-    console.log('keydown', event.key);
-    if (event.key === "j" && (event.metaKey || event.ctrlKey)) {
-      event.preventDefault();
-      openFileDialog = true;
-      console.log('openFileDialog', openFileDialog);
-    }
-
-    if (event.key === "Escape") {
-      openFileDialog = false;
-    }
-  }
-
-  onMount(() => {
-    window.addEventListener('keydown', handleKeydown);
-    return () => {
-      console.log('removing keydown listener');
-      window.removeEventListener('keydown', handleKeydown);
-    };
-  });
 </script>
 
 <div class="flex h-screen text-white font-sans">
@@ -59,7 +36,6 @@
     <slot></slot>
   </main>
   <FileSelectDialog
-    open={openFileDialog}
     submitLabel="Open File"
     on:fileSelected={handleFileSelected}
   />

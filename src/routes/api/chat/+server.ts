@@ -32,9 +32,6 @@ export const POST = (async ({ request }) => {
       system: systemMessage,
       messages: newMessages,
       onFinish: async ({ text }) => {
-        // Uncomment and add your logic here
-        console.log("Generated text:", text);
-        // You can process the text here, e.g., extract code snippets
         const codeSnippets = extractCodeSnippets(text);
         console.log("Extracted code snippets:", codeSnippets);
 

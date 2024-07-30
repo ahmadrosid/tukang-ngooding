@@ -13,7 +13,7 @@
 		close: void;
 	}>();
   
-	export let open = true;
+	let open = false;
 	export let submitLabel: string | undefined = undefined;
 
 	let allFiles: FileItem[] = [];
@@ -38,6 +38,11 @@
 				fuse = new Fuse(allFiles, options);
 			}
 		});
+
+		window.addEventListener('keydown', handleKeydown);
+		return () => {
+			window.removeEventListener('keydown', handleKeydown);
+		};
 	});
 
 	function handleSearch() {
@@ -67,6 +72,15 @@
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
+        if (event.key === "j" && (event.metaKey || event.ctrlKey)) {
+            open = true;
+            event.preventDefault();
+        }
+
+        if (event.key === "Escape") {
+            open = false;
+        }
+        
 		if (event.key === 'ArrowDown') {
 			event.preventDefault();
 			selectedIndex = (selectedIndex + 1) % displayedFiles.length;
@@ -76,8 +90,8 @@
 			selectedIndex = (selectedIndex - 1 + displayedFiles.length) % displayedFiles.length;
 			selectedFile = displayedFiles[selectedIndex];
 		} else if (event.key === 'Enter') {
-			event.preventDefault();
 			if (selectedFile) {
+			    event.preventDefault();
 				confirmSelection();
 			}
 		}
@@ -107,7 +121,6 @@
 				placeholder="Search files..." 
 				autocomplete="off"
 				bind:value={searchQuery}
-				on:keydown={handleKeydown}
 			/>
 		</div>
 		<div class="p-3 text-sm text-white h-[250px] overflow-y-auto scrollbar-hide">
