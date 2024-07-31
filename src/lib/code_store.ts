@@ -6,7 +6,7 @@ export type CodeStoreType = {
     path: string,
     fileName: string,
     lastModified: string,
-    size: 0,
+    size: number,
     isDirty: false
 }
 

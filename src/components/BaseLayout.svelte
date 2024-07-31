@@ -1,8 +1,10 @@
 <script lang="ts">
   import FileSelectDialog from "./FileSelectDialog.svelte";
+  import CreateFileDialog from "./CreateFileDialog.svelte";
   import Sidebar from "./Sidebar.svelte";
   import { updateCode } from "$lib/code_store";
-  import { onMount } from 'svelte';
+
+  let createFileDialogOpen = false;
 
   async function openFile(file: { name: string; type: string }): Promise<void> {
     try {
@@ -28,15 +30,33 @@
   ) {
     openFile(file.detail);
   }
+
+  function handleCreateFile(event: CustomEvent<{ fileName: string; content: string }>) {
+    const { fileName, content } = event.detail;
+    updateCode({
+      code: content,
+      language: fileName.split('.').pop()?.toLowerCase() || "typescript",
+      path: fileName,
+      fileName: fileName.split('/').pop() || "",
+      lastModified: new Date().toISOString(),
+      size: content.length,
+      isDirty: false,
+    });
+  }
 </script>
 
 <div class="flex h-screen text-white font-sans">
-  <Sidebar />
+  <Sidebar on:createFile={() => createFileDialogOpen = true} />
   <main class="flex-grow overflow-y-auto bg-neutral-900 relative">
     <slot></slot>
   </main>
   <FileSelectDialog
     submitLabel="Open File"
     on:fileSelected={handleFileSelected}
+  />
+  <CreateFileDialog
+    bind:open={createFileDialogOpen}
+    on:createFile={handleCreateFile}
+    on:close={() => createFileDialogOpen = false}
   />
 </div>

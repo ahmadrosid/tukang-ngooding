@@ -1,6 +1,10 @@
 <script lang="ts">
+  import { createEventDispatcher } from 'svelte';
+  import PlusIcon from 'lucide-svelte/icons/folder-plus' 
   import ProjectList from './ProjectList.svelte';
   import FileTree from './FileTree.svelte';
+
+  const dispatch = createEventDispatcher();
 
   let isSidebarOpen: boolean = true;
   let currentProject: string = "Cody";
@@ -19,6 +23,10 @@
     projects = [...projects, newProjectName];
     switchProject({ detail: newProjectName } as CustomEvent<string>);
   }
+
+  function openCreateFileDialog(): void {
+    dispatch('createFile');
+  }
 </script>
 
 <aside
@@ -35,11 +43,12 @@
     <FileTree />
   </div>
   <div class="mt-auto">
-    <ProjectList
-      {projects}
-      {currentProject}
-      on:switchProject={switchProject}
-      on:addProject={addProject}
-    />
+      <button
+        on:click={openCreateFileDialog}
+        class="px-3 py-2 bg-neutral-700 text-white rounded hover:bg-neutral-600/50 focus:outline-none text-sm flex items-center gap-2 w-full"
+      >
+        <PlusIcon class="size-4"/>
+        Create New File
+      </button>
   </div>
 </aside>

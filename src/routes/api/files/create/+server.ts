@@ -14,7 +14,11 @@ export const POST = async ({ request }: any) => {
 
     try {
         const fullPath = path.resolve(currentDirectory, fileName);
-        
+        const dirPath = path.dirname(fullPath);
+
+        // Create directory if it doesn't exist
+        await fs.mkdir(dirPath, { recursive: true });
+
         // Check if file already exists
         try {
             await fs.access(fullPath);
@@ -28,7 +32,8 @@ export const POST = async ({ request }: any) => {
 
         return json({
             message: "File created successfully",
-            name: path.basename(fullPath)
+            name: path.basename(fullPath),
+            path: path.relative(currentDirectory, fullPath)
         }, { status: 201 });
     } catch (error) {
         return json({ error: error instanceof Error ? error.message : String(error) }, { status: 500 });
