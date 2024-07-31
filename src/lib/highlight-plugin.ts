@@ -7,7 +7,9 @@ import go from "highlight.js/lib/languages/go";
 import css from "highlight.js/lib/languages/css";
 import php from "highlight.js/lib/languages/php";
 import bash from "highlight.js/lib/languages/bash";
+import java from "highlight.js/lib/languages/java";
+import rust from "highlight.js/lib/languages/rust";
 
 export const highlightPlugin: Plugin = {
-  rehypePlugin: [rehypeHighlight, { languages: { typescript, javascript, xml, go, css, php, bash } }],
+  rehypePlugin: [rehypeHighlight, { languages: { typescript, javascript, xml, go, css, php, bash, java, rust } }],
 };
