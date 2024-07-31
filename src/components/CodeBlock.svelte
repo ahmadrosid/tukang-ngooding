@@ -12,8 +12,8 @@
 </script>
 
 <div class="p-0 bg-neutral-900 rounded-lg overflow-hidden font-mono">
-    <div
-    class="flex justify-between items-center px-4 py-2 bg-neutral-700 text-neutral-400 -mb-6"
+  <div
+    class="flex justify-between items-center px-4 py-2 bg-neutral-700/75 text-neutral-400 -mb-6"
   >
     <span class="text-xs"></span>
     <button
@@ -27,5 +27,5 @@
       {/if}
     </button>
   </div>
-  <pre bind:this={pre} class="mx-4"><slot /></pre>
+  <pre bind:this={pre}><slot /></pre>
 </div>

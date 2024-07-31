@@ -1,7 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import PlusIcon from 'lucide-svelte/icons/folder-plus' 
-  import ProjectList from './ProjectList.svelte';
   import FileTree from './FileTree.svelte';
 
   const dispatch = createEventDispatcher();

@@ -3,7 +3,7 @@
   import { gfmPlugin } from "svelte-exmarkdown/gfm";
   import { highlightPlugin } from "$lib/highlight-plugin";
   import CodeBlock from "./CodeBlock.svelte";
-  const plugins: Plugin[] = [gfmPlugin(), highlightPlugin, { renderer: { code: CodeBlock } }];
+  const plugins: Plugin[] = [gfmPlugin(), highlightPlugin, { renderer: { pre: CodeBlock } }];
 
   export let message;
 </script>
