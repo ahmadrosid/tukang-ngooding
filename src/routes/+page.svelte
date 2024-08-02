@@ -4,7 +4,6 @@
   import ChatUI from "../components/ChatUI.svelte";
   import CodeEditor from "../components/CodeEditor.svelte";
   import { codeStore, updateCode, type CodeStoreType } from "$lib/code_store";
-  import { updateFile } from '$lib/api';
 
   let leftSize = 50;
   let rightSize = 50;
