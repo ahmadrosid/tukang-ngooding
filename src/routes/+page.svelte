@@ -32,13 +32,6 @@
     }
     return "typescript";
   }
-
-  async function handleSave(code: string, path?: string) {
-    if (!path) {
-      return;
-    }
-    const result = await updateFile(path, code);
-  }
 </script>
 
 <svelte:head>
@@ -67,9 +60,8 @@
           language={getLanguage(codeValue)}
           theme="vs-dark"
           value={codeValue?.code || ""}
+          filePath={codeValue?.path}
           on:change={handleCodeChange}
-          on:save={async (event) =>
-            await handleSave(event.detail, codeValue?.path)}
         />
       </div>
     </Pane>

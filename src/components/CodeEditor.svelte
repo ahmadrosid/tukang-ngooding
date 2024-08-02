@@ -1,37 +1,35 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount } from 'svelte';
+  import { onMount } from 'svelte';
   import Monaco from "svelte-monaco";
   import { Loader2 } from 'lucide-svelte';
+  import { updateFile } from '$lib/api';
   
   export let value = '';
   export let language = '';
+  export let filePath = '';
   export let theme: "vs-light" | "vs-dark" = "vs-light";
-  const dispatch = createEventDispatcher();
   
   let editorReady = false;
   let editor: any;
-  
-  function debounce(func: Function, delay: number) {
-    let timeoutId: ReturnType<typeof setTimeout>;
-    return function (this: any, ...args: any[]) {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => func.apply(this, args), delay);
-    };
-  }
-  
-  const handleChange = debounce((newValue: string) => {
-    dispatch('change', newValue);
-  }, 800); // 800ms debounce
-  
-  $: if (value) {
-    handleChange(value);
-  }
-  
+
   function handleReady(event: CustomEvent) {
     editorReady = true;
     editor = event.detail.editor;
   }
-
+  
+  async function handleSave(event: KeyboardEvent) {
+    if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+      event.preventDefault();
+      if (filePath) {
+        try {
+            await updateFile(filePath, value);
+        } catch (error) {
+            console.error('Error saving file:', error);
+        }
+      }
+    }
+  }
+  
   onMount(() => {
     return () => {
       if (editor) {
@@ -39,13 +37,6 @@
       }
     };
   });
-
-  function handleSave(event: KeyboardEvent) {
-    if ((event.ctrlKey || event.metaKey) && event.key === 's') {
-      event.preventDefault();
-      dispatch('save', value);
-    }
-  }
 </script>
 
 <svelte:window on:keydown={handleSave} />
