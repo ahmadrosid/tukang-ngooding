@@ -33,17 +33,15 @@ async function validateAndResolvePath(filePath: string): Promise<string> {
 }
 
 async function readFile(filePath: string): Promise<string> {
-  const fullPath = await validateAndResolvePath(filePath);
-  return fs.readFile(fullPath, "utf-8");
+  return fs.readFile(filePath, "utf-8");
 }
 
 async function writeFile(filePath: string, content: string): Promise<void> {
-  const fullPath = await validateAndResolvePath(filePath);
-  await fs.writeFile(fullPath, content, "utf-8");
+  await fs.writeFile(filePath, content, "utf-8");
 }
 
 export async function getSystemMessage(filePath: string): Promise<string> {
-  const fullPath = await validateAndResolvePath(filePath);
+  const fullPath = await resolveAndValidateFilePath(filePath);
   const extension = path.extname(fullPath).slice(1).toLowerCase();
 
   if (!(extension in supportedExtensions)) {
