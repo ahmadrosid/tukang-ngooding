@@ -51,19 +51,19 @@
 {/if}
 
 <div class="w-full h-full" class:hidden={!editorReady}>
-<Monaco
-  options={{
-    language,
-    automaticLayout: true,
-    minimap: {
-      enabled: false,
-    },
-    padding: {
-      top: 20,
-    }
-  }}
-  theme={theme}
-  on:ready={handleReady}
-  bind:value
-/>
+  <Monaco
+    options={{
+      language,
+      automaticLayout: true,
+      minimap: {
+        enabled: false,
+      },
+      padding: {
+        top: 20,
+      }
+    }}
+    theme={theme}
+    on:ready={handleReady}
+    bind:value
+  />
 </div>
