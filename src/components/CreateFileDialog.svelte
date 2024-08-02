@@ -1,5 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
+  import { createFile } from '$lib/api';
 
   const dispatch = createEventDispatcher<{
     createFile: { fileName: string; content: string };
@@ -26,7 +27,7 @@
     creating = false;
   }
 
-  async function createFile(): Promise<void> {
+  async function handleCreateFile(): Promise<void> {
     if (!fileName.trim()) {
       error = "File name is required";
       return;
@@ -36,13 +37,7 @@
     error = "";
 
     try {
-      const response = await fetch("/api/files/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ fileName, content }),
-      });
+      const response = await createFile(fileName, content);
 
       const result = await response.json();
 
@@ -70,7 +65,7 @@
   >
     <div class="p-6">
       <h2 class="text-xl font-semibold mb-4 text-white">Create New File</h2>
-      <form on:submit|preventDefault={createFile}>
+      <form on:submit|preventDefault={handleCreateFile}>
         <div class="mb-4">
           <label
             for="fileName"

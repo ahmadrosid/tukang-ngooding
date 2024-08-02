@@ -3,7 +3,8 @@
   import BaseLayout from "../components/BaseLayout.svelte";
   import ChatUI from "../components/ChatUI.svelte";
   import CodeEditor from "../components/CodeEditor.svelte";
-  import { codeStore, updateCode, type CodeStoreType } from "../lib/code_store";
+  import { codeStore, updateCode, type CodeStoreType } from "$lib/code_store";
+  import { updateFile } from '$lib/api';
 
   let leftSize = 50;
   let rightSize = 50;
@@ -37,29 +38,6 @@
       return;
     }
     const result = await updateFile(path, code);
-  }
-
-  async function updateFile(filePath: string, content: string) {
-    try {
-      const response = await fetch("/api/files/update", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ filePath, content }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to update file");
-      }
-
-      const result = await response.json();
-      return result;
-    } catch (error) {
-      console.error("Error updating file:", error);
-      throw error;
-    }
   }
 </script>
 

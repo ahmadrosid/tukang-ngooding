@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { TreeNode } from "$lib/file_utils";
-  import { updateCode } from "../lib/code_store";
+  import { updateCode } from "$lib/code_store";
+  import { fetchFileContent } from '$lib/api';
 
   export let tree;
   const toggleExpansion = () => {
@@ -19,8 +20,7 @@
     if (!file.expanded) {
       try {
         const encodedFilePath = encodeURIComponent(file.fullPath || '');
-        const response = await fetch(`/api/files/fetch?file=${encodedFilePath}`);
-        const data = await response.json();
+        const data = await fetchFileContent(encodedFilePath);
         updateCode({
           code: data.content || "",
           language: data.language.toLowerCase() || "typescript",
