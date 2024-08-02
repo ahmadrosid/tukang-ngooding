@@ -3,6 +3,7 @@
   import CreateFileDialog from "./CreateFileDialog.svelte";
   import Sidebar from "./Sidebar.svelte";
   import { updateCode } from "$lib/code_store";
+  import ProjectRootSelector from "./ProjectRootSelector.svelte";
 
   let createFileDialogOpen = false;
 
@@ -43,12 +44,17 @@
       isDirty: false,
     });
   }
+
+  function handleRootFolderUpdate(event: CustomEvent<string>) {
+    console.log(event.detail);
+  }
 </script>
 
 <div class="flex h-screen text-white font-sans">
   <Sidebar on:createFile={() => createFileDialogOpen = true} />
   <main class="flex-grow overflow-y-auto bg-neutral-900 relative">
     <slot></slot>
+    <ProjectRootSelector on:updateRootFolder={handleRootFolderUpdate} />
   </main>
   <FileSelectDialog
     submitLabel="Open File"
