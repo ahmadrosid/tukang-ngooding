@@ -1,11 +1,13 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, onMount } from "svelte";
+  import Settings from 'lucide-svelte/icons/settings';
 
   export let systemPrompt: string = "";
   const dispatch = createEventDispatcher<{ update: string }>();
 
   let dialogOpen = false;
   let tempSystemPrompt = systemPrompt;
+  let textareaElement: HTMLTextAreaElement;
 
   function openDialog() {
     tempSystemPrompt = systemPrompt;
@@ -17,16 +19,35 @@
     dispatch("update", systemPrompt);
     dialogOpen = false;
   }
+
+  function autoResize() {
+    textareaElement.style.height = 'auto';
+    textareaElement.style.height = Math.min(textareaElement.scrollHeight, 600) + 'px';
+  }
+
+  function handleKeydown(event: KeyboardEvent) {
+    if (event.key === 'Escape' && dialogOpen) {
+      dialogOpen = false;
+    }
+  }
+
+  onMount(() => {
+    if (textareaElement) {
+      autoResize();
+    }
+
+		window.addEventListener('keydown', handleKeydown);
+		return () => {
+			window.removeEventListener('keydown', handleKeydown);
+		};
+  });
 </script>
 
 <button
   on:click={openDialog}
   class="w-full px-4 py-2 bg-transparent text-white rounded focus:outline-none text-sm flex items-center"
 >
-  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-  </svg>
+  <Settings class="h-4 w-4 mr-2" />
   <span>Set system prompt</span>
 </button>
 
@@ -34,13 +55,11 @@
   <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-neutral-800 p-6 rounded-lg w-full max-w-xl">
       <h2 class="text-lg font-semibold text-white mb-4">System Prompt</h2>
-      <p class="text-xs text-neutral-300 mb-4">
-        Enter your custom system prompt here. Click save when you're done.
-      </p>
       <textarea
         bind:value={tempSystemPrompt}
+        bind:this={textareaElement}
+        on:input={autoResize}
         placeholder="Enter your custom system prompt here..."
-        rows={5}
         class="w-full p-2 bg-neutral-700 rounded text-white text-sm focus:outline-none resize-none scrollbar-hide mb-4"
       />
       <div class="flex justify-end space-x-2">
