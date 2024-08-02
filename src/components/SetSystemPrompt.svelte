@@ -25,7 +25,6 @@
     textareaElement.style.height = Math.min(textareaElement.scrollHeight, 500) + 'px';
   }
 
-
   function handleKeydown(event: KeyboardEvent) {
     if (event.key === 'Escape' && dialogOpen) {
       dialogOpen = false;
