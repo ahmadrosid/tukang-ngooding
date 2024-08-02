@@ -14,7 +14,7 @@
     systemPrompt?: string;
   }
 
-  $: ({ input, handleSubmit, messages, stop, isLoading } = useChat({
+  const { input, handleSubmit, messages, stop, isLoading } = useChat({
     initialMessages: [
       {
         id: "1",
@@ -22,7 +22,7 @@
         role: "assistant",
       },
     ],
-  }));
+  });
 
   function autoResize() {
     if (textareaElement) {
@@ -31,20 +31,25 @@
     }
   }
 
+  function handleFormSubmit(e: Event) {
+    e.preventDefault();
+    let body: ChatBody = {};
+    if (customSystemPrompt !== '') {
+      body.systemPrompt = customSystemPrompt;
+    }
+    if (filePath !== '') {
+      body.file = filePath;
+    }
+    handleSubmit(e, { body });
+    autoResize();
+  }
+
   onMount(() => {
     if (textareaElement) {
       textareaElement.addEventListener("keydown", (e) => {
         if (e.key === "Enter" && !e.shiftKey) {
           e.preventDefault();
-          let body: ChatBody = {};
-          if (customSystemPrompt !== '') {
-            body.systemPrompt = customSystemPrompt;
-          }
-          if (filePath !== '') {
-            body.file = filePath;
-          }
-          handleSubmit(e, { body });
-          autoResize();
+          handleFormSubmit(e);
         }
       });
       autoResize();
@@ -71,7 +76,7 @@
     </div>
     <div class="sticky bottom-0 inset-x-0 w-full">
       <form
-        on:submit|preventDefault={handleSubmit}
+        on:submit={handleFormSubmit}
         class="max-w-4xl w-full mx-auto"
       >
         <div

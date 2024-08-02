@@ -80,7 +80,9 @@
         if (event.key === "Escape") {
             open = false;
         }
-        
+	}
+
+	function handleInputKeydown(event: KeyboardEvent) {        
 		if (event.key === 'ArrowDown') {
 			event.preventDefault();
 			selectedIndex = (selectedIndex + 1) % displayedFiles.length;
@@ -121,6 +123,7 @@
 				placeholder="Search files..." 
 				autocomplete="off"
 				bind:value={searchQuery}
+				on:keydown={handleInputKeydown}
 			/>
 		</div>
 		<div class="p-3 text-sm text-white h-[250px] overflow-y-auto scrollbar-hide">
