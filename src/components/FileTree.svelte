@@ -74,7 +74,7 @@
     const result = await fetchFileTree();
     if (result) {
       tree = {
-        label: "/Users/ahmadrosid/github.com/ahmadrosid/Products/TukangKoding",
+        label: result.rootFolder,
         children: transformToTreeNodes(result),
         expanded: true,
       };

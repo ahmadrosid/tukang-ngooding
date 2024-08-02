@@ -42,7 +42,10 @@ export async function GET(request) {
       };
     }));
 
-    return json({ files: fileList });
+    return json({
+      rootFolder: path.basename(folderPath),
+      files: fileList
+    });
   } catch (error: any) {
     return json({ error: error.message });
   }

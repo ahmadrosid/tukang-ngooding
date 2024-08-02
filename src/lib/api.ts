@@ -1,4 +1,5 @@
 interface FileResponse {
+  rootFolder: string;
   files: {
     name: string;
     type: "file" | "folder";
