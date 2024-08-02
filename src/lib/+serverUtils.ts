@@ -3,38 +3,54 @@ import { promises as fs } from "fs";
 import { env } from "$env/dynamic/private";
 
 export const supportedExtensions: Record<string, string> = {
-  txt: "Plain Text",
-  js: "JavaScript",
-  ts: "TypeScript",
-  html: "HTML",
-  css: "CSS",
-  json: "JSON",
-  md: "Markdown",
-  py: "Python",
-  java: "Java",
-  c: "C",
-  cpp: "C++",
-  go: "Go",
-  rs: "Rust",
-  sql: "SQL",
-  xml: "XML",
-  yaml: "YAML",
-  sh: "Shell",
-  svelte: "Svelte",
-  php: "PHP",
+  txt: "Plain Text", js: "JavaScript", ts: "TypeScript", html: "HTML",
+  css: "CSS", json: "JSON", md: "Markdown", py: "Python",
+  java: "Java", c: "C", cpp: "C++", go: "Go", rs: "Rust",
+  sql: "SQL", xml: "XML", yaml: "YAML", sh: "Shell",
+  svelte: "Svelte", php: "PHP",
 };
+
+const allowedExtensions = Object.keys(supportedExtensions);
 
 const currentDirectory: string = env.CURRENT_DIRECTORY || "";
 
+export async function resolveAndValidateFilePath(filePath: string): Promise<string> {
+  const fullPath = path.resolve(currentDirectory, filePath);
+  await fs.access(fullPath);
+  return fullPath;
+}
+
+async function validateAndResolvePath(filePath: string): Promise<string> {
+  const fullPath = path.resolve(currentDirectory, filePath);
+  
+  if (!fullPath.startsWith(currentDirectory) || 
+      !allowedExtensions.includes(path.extname(fullPath))) {
+    throw new Error('Invalid file path');
+  }
+
+  await fs.access(fullPath);
+  return fullPath;
+}
+
+async function readFile(filePath: string): Promise<string> {
+  const fullPath = await validateAndResolvePath(filePath);
+  return fs.readFile(fullPath, "utf-8");
+}
+
+async function writeFile(filePath: string, content: string): Promise<void> {
+  const fullPath = await validateAndResolvePath(filePath);
+  await fs.writeFile(fullPath, content, "utf-8");
+}
+
 export async function getSystemMessage(filePath: string): Promise<string> {
-  const fullPath = await resolveAndValidateFilePath(filePath);
+  const fullPath = await validateAndResolvePath(filePath);
   const extension = path.extname(fullPath).slice(1).toLowerCase();
 
   if (!(extension in supportedExtensions)) {
     throw new Error("Unsupported file type");
   }
 
-  const contents = await fs.readFile(fullPath, "utf-8");
+  const contents = await readFile(filePath);
   return `Use the provided code to answer this question. 
 Answer succinctly and provide code snippets if needed.
 Use this format for code snippets:
@@ -51,67 +67,19 @@ When user asking for code, give them the full code.`;
 
 export async function updateFile(filePath: string, content: string): Promise<void> {
   try {
-    const fullPath = await resolveAndValidateFilePath(filePath);
+    const fullPath = await validateAndResolvePath(filePath);
+    const existingContent = await readFile(filePath);
 
-    if (!isValidFilePath(fullPath)) {
-      throw new Error('Invalid file path');
-    }
-
-    const existingContent = await fs.readFile(fullPath, 'utf8');
-
-    // Compare and update only if there are changes
     if (existingContent !== content) {
-      // Create a backup of the original file
       const backupPath = `${fullPath}.bak`;
-      await fs.writeFile(backupPath, existingContent, 'utf8');
-
-      // Write the new content
-      await fs.writeFile(fullPath, content, 'utf8');
-
+      await writeFile(backupPath, existingContent);
+      await writeFile(filePath, content);
       console.log(`File ${filePath} updated successfully. Backup created at ${backupPath}`);
     } else {
       console.log(`File ${filePath} content unchanged. No update needed.`);
     }
   } catch (error: any) {
-    if (error.code === 'ENOENT') {
-      console.error(`File ${filePath} does not exist.`);
-    } else {
-      console.error(`Error updating file ${filePath}:`, error);
-    }
+    console.error(`Error updating file ${filePath}:`, error);
     throw error;
   }
-}
-
-function isValidFilePath(fullPath: string): boolean {
-  // Define the allowed directory (e.g., your project root)
-  const allowedDirectory = currentDirectory;
-
-  // Check if the file path is within the allowed directory
-  if (!fullPath.startsWith(allowedDirectory)) {
-    return false;
-  }
-
-  // Add more checks as needed, e.g., file extensions, specific subdirectories, etc.
-  const allowedExtensions = ['.ts', '.js', '.svelte']; // Add more as needed
-  if (!allowedExtensions.includes(path.extname(fullPath))) {
-    return false;
-  }
-
-  return true;
-}
-
-export async function resolveAndValidateFilePath(filePath: string): Promise<string> {
-  const fullPath = path.resolve(currentDirectory, filePath);
-  await fs.access(fullPath);
-  return fullPath;
-}
-
-export async function readFileContents(filePath: string): Promise<string> {
-  const fullPath = await resolveAndValidateFilePath(filePath);
-  return fs.readFile(fullPath, "utf-8");
-}
-
-export async function writeFileContents(filePath: string, content: string): Promise<void> {
-  const fullPath = await resolveAndValidateFilePath(filePath);
-  await fs.writeFile(fullPath, content, "utf-8");
 }
