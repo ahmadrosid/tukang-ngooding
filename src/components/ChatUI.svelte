@@ -31,10 +31,6 @@
     }
   }
 
-  function handleSystemPromptUpdate(event: CustomEvent<string>) {
-    customSystemPrompt = event.detail;
-  }
-
   onMount(() => {
     if (textareaElement) {
       textareaElement.addEventListener("keydown", (e) => {
@@ -62,10 +58,7 @@
   <div class="h-screen relative overflow-auto scrollbar-hide">
     <div class="min-h-screen text-sm">
       <div class="max-w-4xl mx-auto w-full space-y-4 p-2 py-4">
-        <CustomSystemPrompt
-          bind:systemPrompt={customSystemPrompt}
-          on:update={handleSystemPromptUpdate}
-        />
+        <CustomSystemPrompt on:update={e => customSystemPrompt = e.detail} />
         {#if filePath}
           <div class="p-2 text-xs text-neutral-400 sticky top-0 bg-neutral-900">
             Context file: <span class="font-semibold">{filePath}</span>
