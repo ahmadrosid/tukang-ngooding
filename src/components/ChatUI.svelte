@@ -2,22 +2,25 @@
   import { onMount, afterUpdate } from "svelte";
   import { useChat } from "@ai-sdk/svelte";
   import MessageItem from "./MessageItem.svelte";
+  import CustomSystemPrompt from "./CustomSystemPrompt.svelte";
 
   export let filePath: string;
 
   let textareaElement: HTMLTextAreaElement;
   let chatInstance: ReturnType<typeof useChat>;
+  let customSystemPrompt: string = '';
 
   $: {
-    // Re-initialize chat when filePath changes
+    // Re-initialize chat when filePath or customSystemPrompt changes
     chatInstance = useChat({
       body: {
         file: filePath,
+        systemPrompt: customSystemPrompt,
       },
       initialMessages: [
         {
           id: "1",
-          content: `Hi, it's Tukang Ngooding's here! How can I help you today?`,
+          content: `Hi, I'm Tukang Ngooding! How can I help you today?`,
           role: "assistant",
         },
       ],
@@ -31,6 +34,24 @@
       textareaElement.style.height = "auto";
       textareaElement.style.height = textareaElement.scrollHeight + "px";
     }
+  }
+
+  function handleSystemPromptUpdate(event: CustomEvent<string>) {
+    customSystemPrompt = event.detail;
+    // Re-initialize chat with new system prompt
+    chatInstance = useChat({
+      body: {
+        file: filePath,
+        systemPrompt: customSystemPrompt,
+      },
+      initialMessages: [
+        {
+          id: "1",
+          content: `Hi, I'm Tukang Ngooding! How can I help you today?`,
+          role: "assistant",
+        },
+      ],
+    });
   }
 
   onMount(() => {
@@ -53,6 +74,10 @@
   <div class="h-screen relative overflow-auto scrollbar-hide">
     <div class="min-h-screen text-sm">
       <div class="max-w-4xl mx-auto w-full space-y-4 p-2 py-4">
+        <CustomSystemPrompt
+          bind:systemPrompt={customSystemPrompt}
+          on:update={handleSystemPromptUpdate}
+        />
         {#if filePath}
           <div class="p-2 text-xs text-neutral-400 sticky top-0 bg-neutral-900">
             Context file: <span class="font-semibold">{filePath}</span>

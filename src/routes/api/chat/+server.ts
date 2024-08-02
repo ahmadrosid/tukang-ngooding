@@ -2,7 +2,7 @@ import { createAnthropic } from "@ai-sdk/anthropic";
 import { streamText, type CoreMessage } from "ai";
 import type { RequestHandler } from "./$types";
 import { env } from "$env/dynamic/private";
-import { getSystemMessage, updateFile } from "../../../lib/+serverUtils";
+import { getSystemMessage } from "$lib/+serverUtils";
 
 const anthropic = createAnthropic({
   apiKey: env.ANTHROPIC_API_KEY,
@@ -50,6 +50,16 @@ export const POST = (async ({ request }) => {
       },
     });
 
+    return result.toAIStreamResponse();
+  }
+
+  if (data.systemPrompt) {
+    console.log("Using system prompt:", data.systemPrompt);
+    const result = await streamText({
+      model: anthropic("claude-3-5-sonnet-20240620"),
+      messages: newMessages,
+      system: data.systemPrompt,
+    });
     return result.toAIStreamResponse();
   }
 
