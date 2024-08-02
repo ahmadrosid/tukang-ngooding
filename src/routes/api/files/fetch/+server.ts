@@ -2,31 +2,9 @@ import { json } from "@sveltejs/kit";
 import path from "path";
 import { promises as fs } from "fs";
 import { env } from "$env/dynamic/private";
+import { supportedExtensions } from "$lib/+serverUtils.js";
 
 const currentDirectory: string = env.CURRENT_DIRECTORY || "";
-
-// List of supported file extensions and their corresponding languages
-const supportedExtensions = {
-  'txt': 'Plain Text',
-  'js': 'JavaScript',
-  'ts': 'TypeScript',
-  'html': 'HTML',
-  'css': 'CSS',
-  'json': 'JSON',
-  'md': 'Markdown',
-  'py': 'Python',
-  'java': 'Java',
-  'c': 'C',
-  'cpp': 'C++',
-  'go': 'Go',
-  'rs': 'Rust',
-  'sql': 'SQL',
-  'xml': 'XML',
-  'yaml': 'YAML',
-  'sh': 'Shell',
-  'svelte': 'Svelte',
-  'php': 'PHP',
-};
 
 export async function GET(request) {
   const url = new URL(request.url);

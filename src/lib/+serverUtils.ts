@@ -2,7 +2,7 @@ import path from "path";
 import { promises as fs } from "fs";
 import { env } from "$env/dynamic/private";
 
-const supportedExtensions: Record<string, string> = {
+export const supportedExtensions: Record<string, string> = {
   txt: "Plain Text",
   js: "JavaScript",
   ts: "TypeScript",
