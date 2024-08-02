@@ -22,8 +22,9 @@
 
   function autoResize() {
     textareaElement.style.height = 'auto';
-    textareaElement.style.height = Math.min(textareaElement.scrollHeight, 600) + 'px';
+    textareaElement.style.height = Math.min(textareaElement.scrollHeight, 500) + 'px';
   }
+
 
   function handleKeydown(event: KeyboardEvent) {
     if (event.key === 'Escape' && dialogOpen) {
@@ -36,10 +37,10 @@
       autoResize();
     }
 
-		window.addEventListener('keydown', handleKeydown);
-		return () => {
-			window.removeEventListener('keydown', handleKeydown);
-		};
+    window.addEventListener('keydown', handleKeydown);
+    return () => {
+        window.removeEventListener('keydown', handleKeydown);
+    };
   });
 </script>
 
@@ -60,7 +61,7 @@
         bind:this={textareaElement}
         on:input={autoResize}
         placeholder="Enter your custom system prompt here..."
-        class="w-full p-2 bg-neutral-700 rounded text-white text-sm focus:outline-none resize-none scrollbar-hide mb-4"
+        class="w-full p-2 bg-neutral-700 rounded text-white text-sm focus:outline-none resize-none mb-4"
       />
       <div class="flex justify-end space-x-2">
         <button

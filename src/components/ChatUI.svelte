@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import { useChat } from "@ai-sdk/svelte";
   import MessageItem from "./MessageItem.svelte";
-  import CustomSystemPrompt from "./CustomSystemPrompt.svelte";
+  import SetSystemPrompt from "./SetSystemPrompt.svelte";
 
   export let filePath: string;
 
@@ -63,7 +63,7 @@
   <div class="h-screen relative overflow-auto scrollbar-hide">
     <div class="min-h-screen text-sm">
       <div class="max-w-4xl mx-auto w-full space-y-4 p-2 py-4">
-        <CustomSystemPrompt on:update={e => customSystemPrompt = e.detail} />
+        <SetSystemPrompt on:update={e => customSystemPrompt = e.detail} />
         {#if filePath}
           <div class="p-2 text-xs text-neutral-400 sticky top-0 bg-neutral-900">
             Context file: <span class="font-semibold">{filePath}</span>
