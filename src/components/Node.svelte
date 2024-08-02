@@ -20,7 +20,9 @@
     if (!file.expanded) {
       try {
         const encodedFilePath = encodeURIComponent(file.fullPath || '');
+        console.log(encodedFilePath);
         const data = await fetchFileContent(encodedFilePath);
+        console.log(data);
         updateCode({
           code: data.content || "",
           language: data.language.toLowerCase() || "typescript",

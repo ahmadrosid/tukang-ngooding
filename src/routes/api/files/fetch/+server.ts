@@ -40,7 +40,8 @@ export async function GET(request) {
   }
 
   try {
-    const fullPath = path.resolve(currentDirectory, filePath);
+    const encodedFilePath = decodeURIComponent(filePath);
+    const fullPath = path.resolve(currentDirectory, encodedFilePath);
     
     // Check if the file exists
     await fs.access(fullPath);

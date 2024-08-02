@@ -45,7 +45,7 @@
 
 <button
   on:click={openDialog}
-  class="w-full px-4 py-2 bg-transparent text-white rounded focus:outline-none text-sm flex items-center"
+  class="w-full px-2 bg-transparent text-white rounded focus:outline-none text-sm flex items-center"
 >
   <Settings class="h-4 w-4 mr-2" />
   <span>Set system prompt</span>
