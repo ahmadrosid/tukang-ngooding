@@ -27,8 +27,7 @@ export const supportedExtensions: Record<string, string> = {
 const currentDirectory: string = env.CURRENT_DIRECTORY || "";
 
 export async function getSystemMessage(filePath: string): Promise<string> {
-  const fullPath = path.resolve(currentDirectory, filePath);
-  await fs.access(fullPath);
+  const fullPath = await resolveAndValidateFilePath(filePath);
   const extension = path.extname(fullPath).slice(1).toLowerCase();
 
   if (!(extension in supportedExtensions)) {
@@ -52,18 +51,12 @@ When user asking for code, give them the full code.`;
 
 export async function updateFile(filePath: string, content: string): Promise<void> {
   try {
-    // Resolve the full path
-    const fullPath = path.resolve(currentDirectory, filePath);
+    const fullPath = await resolveAndValidateFilePath(filePath);
 
-    // Validate the file path
     if (!isValidFilePath(fullPath)) {
       throw new Error('Invalid file path');
     }
 
-    // Check if file exists
-    await fs.access(fullPath);
-
-    // Read the existing content
     const existingContent = await fs.readFile(fullPath, 'utf8');
 
     // Compare and update only if there are changes
@@ -105,4 +98,20 @@ function isValidFilePath(fullPath: string): boolean {
   }
 
   return true;
+}
+
+export async function resolveAndValidateFilePath(filePath: string): Promise<string> {
+  const fullPath = path.resolve(currentDirectory, filePath);
+  await fs.access(fullPath);
+  return fullPath;
+}
+
+export async function readFileContents(filePath: string): Promise<string> {
+  const fullPath = await resolveAndValidateFilePath(filePath);
+  return fs.readFile(fullPath, "utf-8");
+}
+
+export async function writeFileContents(filePath: string, content: string): Promise<void> {
+  const fullPath = await resolveAndValidateFilePath(filePath);
+  await fs.writeFile(fullPath, content, "utf-8");
 }

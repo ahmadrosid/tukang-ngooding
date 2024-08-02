@@ -1,10 +1,7 @@
 import { json } from "@sveltejs/kit";
 import path from "path";
 import { promises as fs } from "fs";
-import { env } from "$env/dynamic/private";
-import { supportedExtensions } from "$lib/+serverUtils.js";
-
-const currentDirectory: string = env.CURRENT_DIRECTORY || "";
+import { supportedExtensions, resolveAndValidateFilePath } from "$lib/+serverUtils.js";
 
 export async function GET(request) {
   const url = new URL(request.url);
@@ -19,10 +16,7 @@ export async function GET(request) {
 
   try {
     const encodedFilePath = decodeURIComponent(filePath);
-    const fullPath = path.resolve(currentDirectory, encodedFilePath);
-    
-    // Check if the file exists
-    await fs.access(fullPath);
+    const fullPath = await resolveAndValidateFilePath(encodedFilePath);
 
     const extension = path.extname(fullPath).slice(1).toLowerCase();
 

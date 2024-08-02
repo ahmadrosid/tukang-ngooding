@@ -2,6 +2,7 @@ import { json } from '@sveltejs/kit';
 import path from 'path';
 import { promises as fs } from 'fs';
 import { env } from '$env/dynamic/private';
+import { resolveAndValidateFilePath } from "$lib/+serverUtils";
 
 const currentDirectory = env.CURRENT_DIRECTORY || '';
 
@@ -13,7 +14,8 @@ export const POST = async ({ request }: any) => {
     }
 
     try {
-        const fullPath = path.resolve(currentDirectory, fileName);
+        const fullPath = await resolveAndValidateFilePath(fileName);
+
         const dirPath = path.dirname(fullPath);
 
         // Create directory if it doesn't exist

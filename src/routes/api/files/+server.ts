@@ -2,9 +2,7 @@ import { json } from "@sveltejs/kit";
 import path from "path";
 import * as globby from "globby";
 import { promises as fs } from "fs";
-import { env } from "$env/dynamic/private";
-
-const currentDirectory: string = env.CURRENT_DIRECTORY || "";
+import { resolveAndValidateFilePath } from "$lib/+serverUtils";
 
 export async function GET(request) {
   const url = new URL(request.url);
@@ -24,8 +22,8 @@ export async function GET(request) {
   }
 
   try {
-    const folderPath = path.resolve(currentDirectory, folderName);
-    
+    const folderPath = await resolveAndValidateFilePath(folderName);
+
     const paths = await globby.globby(['**/*'], {
       cwd: folderPath,
       gitignore: true,

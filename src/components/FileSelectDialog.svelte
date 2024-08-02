@@ -72,7 +72,7 @@
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
-        if (event.key === "j" && (event.metaKey || event.ctrlKey)) {
+        if ((event.key === "j" || event.key === "p") && (event.metaKey || event.ctrlKey)) {
             open = true;
             event.preventDefault();
         }
