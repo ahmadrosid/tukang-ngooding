@@ -1,6 +1,5 @@
 <script lang="ts">
   import { PaneGroup, Pane, PaneResizer } from "paneforge";
-  import BaseLayout from "../components/BaseLayout.svelte";
   import ChatUI from "../components/ChatUI.svelte";
   import CodeEditor from "../components/CodeEditor.svelte";
   import { codeStore, updateCode, type CodeStoreType } from "$lib/code_store";
@@ -38,31 +37,29 @@
   <meta name="robots" content="noindex nofollow" />
 </svelte:head>
 
-<BaseLayout>
-  <PaneGroup direction="horizontal" class="w-full">
-    <Pane defaultSize={leftSize}>
-      <div class="px-4">
-        <ChatUI {filePath} />
+<PaneGroup direction="horizontal" class="w-full">
+  <Pane defaultSize={leftSize}>
+    <div class="px-4">
+      <ChatUI {filePath} />
+    </div>
+  </Pane>
+  <PaneResizer
+    class="relative flex bg-neutral-800 w-[2px] items-center justify-center"
+  />
+  <Pane defaultSize={rightSize}>
+    <div class="h-full">
+      <div class="p-2 text-sm">
+        <p>
+          {codeValue?.fileName}
+        </p>
       </div>
-    </Pane>
-    <PaneResizer
-      class="relative flex bg-neutral-800 w-[2px] items-center justify-center"
-    />
-    <Pane defaultSize={rightSize}>
-      <div class="h-full">
-        <div class="p-2 text-sm">
-          <p>
-            {codeValue?.fileName}
-          </p>
-        </div>
-        <CodeEditor
-          language={getLanguage(codeValue)}
-          theme="vs-dark"
-          value={codeValue?.code || ""}
-          filePath={codeValue?.path}
-          on:change={handleCodeChange}
-        />
-      </div>
-    </Pane>
-  </PaneGroup>
-</BaseLayout>
+      <CodeEditor
+        language={getLanguage(codeValue)}
+        theme="vs-dark"
+        value={codeValue?.code || ""}
+        filePath={codeValue?.path}
+        on:change={handleCodeChange}
+      />
+    </div>
+  </Pane>
+</PaneGroup>
