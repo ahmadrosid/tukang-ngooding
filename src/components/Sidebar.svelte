@@ -6,21 +6,9 @@
   const dispatch = createEventDispatcher();
 
   let isSidebarOpen: boolean = true;
-  let currentProject: string = "Cody";
-  let projects: string[] = ["Cody", "Svelte Starter"];
 
   function toggleSidebar(): void {
     isSidebarOpen = !isSidebarOpen;
-  }
-
-  function switchProject(event: CustomEvent<string>): void {
-    currentProject = event.detail;
-  }
-
-  function addProject(event: CustomEvent<string>): void {
-    const newProjectName = event.detail;
-    projects = [...projects, newProjectName];
-    switchProject({ detail: newProjectName } as CustomEvent<string>);
   }
 
   function openCreateFileDialog(): void {
