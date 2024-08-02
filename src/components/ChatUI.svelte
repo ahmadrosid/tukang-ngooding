@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount, afterUpdate } from "svelte";
+  import { onMount } from "svelte";
   import { useChat } from "@ai-sdk/svelte";
   import MessageItem from "./MessageItem.svelte";
   import CustomSystemPrompt from "./CustomSystemPrompt.svelte";
@@ -7,27 +7,22 @@
   export let filePath: string;
 
   let textareaElement: HTMLTextAreaElement;
-  let chatInstance: ReturnType<typeof useChat>;
   let customSystemPrompt: string = '';
 
-  $: {
-    // Re-initialize chat when filePath or customSystemPrompt changes
-    chatInstance = useChat({
-      body: {
-        file: filePath,
-        systemPrompt: customSystemPrompt,
-      },
-      initialMessages: [
-        {
-          id: "1",
-          content: `Hi, I'm Tukang Ngooding! How can I help you today?`,
-          role: "assistant",
-        },
-      ],
-    });
+  type ChatBody = {
+    file?: string;
+    systemPrompt?: string;
   }
 
-  $: ({ input, handleSubmit, messages, stop, isLoading } = chatInstance);
+  $: ({ input, handleSubmit, messages, stop, isLoading } = useChat({
+    initialMessages: [
+      {
+        id: "1",
+        content: `Hi, I'm Tukang Ngooding! How can I help you today?`,
+        role: "assistant",
+      },
+    ],
+  }));
 
   function autoResize() {
     if (textareaElement) {
@@ -38,20 +33,6 @@
 
   function handleSystemPromptUpdate(event: CustomEvent<string>) {
     customSystemPrompt = event.detail;
-    // Re-initialize chat with new system prompt
-    chatInstance = useChat({
-      body: {
-        file: filePath,
-        systemPrompt: customSystemPrompt,
-      },
-      initialMessages: [
-        {
-          id: "1",
-          content: `Hi, I'm Tukang Ngooding! How can I help you today?`,
-          role: "assistant",
-        },
-      ],
-    });
   }
 
   onMount(() => {
@@ -59,11 +40,18 @@
       textareaElement.addEventListener("keydown", (e) => {
         if (e.key === "Enter" && !e.shiftKey) {
           e.preventDefault();
-          handleSubmit();
+          let body: ChatBody = {};
+          if (customSystemPrompt !== '') {
+            body.systemPrompt = customSystemPrompt;
+          }
+          if (filePath !== '') {
+            body.file = filePath;
+          }
+          handleSubmit(e, { body });
           autoResize();
         }
       });
-      autoResize(); // Initial resize
+      autoResize();
     }
   });
 
