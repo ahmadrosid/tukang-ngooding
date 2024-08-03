@@ -48,7 +48,7 @@ export async function getSystemMessage(filePath: string): Promise<string> {
     throw new Error("Unsupported file type");
   }
 
-  const contents = await readFile(filePath);
+  const contents = await readFile(fullPath);
   return `Use the provided code to answer this question. 
 Answer succinctly and provide code snippets if needed.
 Use this format for code snippets:
