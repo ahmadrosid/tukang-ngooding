@@ -74,10 +74,9 @@
   // init the tree state
   rebuildTree({ detail: { node: tree } }, false);
 
-  async function refreshFileTree() {
-    const currentRoot = $projectRoot;
+  async function refreshFileTree(root: string) {
     try {
-        const result = await fetchFileTree(currentRoot);
+        const result = await fetchFileTree(root);
         if (result) {
             tree = {
                 label: result.rootFolder,
@@ -85,6 +84,8 @@
                 expanded: true,
             };
             error = "";
+            initTreeMap(tree);
+            rebuildTree({ detail: { node: tree } }, false);
         } else {
             error = "No files found."
         }
@@ -92,13 +93,21 @@
         error = "Error fetching file tree.";
         console.error("Error fetching file tree:", e);
     }
-}
+  }
 
-onMount(refreshFileTree);
+  let currentRoot: string;
 
-$: if ($projectRoot) {
-    refreshFileTree();
-}
+  onMount(() => {
+    currentRoot = $projectRoot;
+    refreshFileTree(currentRoot);
+  });
+
+  $: if ($projectRoot !== currentRoot) {
+    currentRoot = $projectRoot;
+    if (typeof window !== 'undefined') {
+      refreshFileTree(currentRoot);
+    }
+  }
 </script>
 
 <div class="py-2 -ml-4 text-sm max-h-[70vh] overflow-y-auto scrollbar-hide">

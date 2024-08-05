@@ -21,8 +21,6 @@ export async function GET(request) {
     );
   }
 
-  console.log(process.env.CURRENT_DIRECTORY)
-
   try {
     const folderPath = await resolveAndValidateFilePath(folderName);
 
