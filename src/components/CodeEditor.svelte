@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import Monaco from "svelte-monaco";
-  import { Loader2 } from 'lucide-svelte';
+  import Loader2 from 'lucide-svelte/icons/loader'; 
   import { updateFile } from '$lib/api';
   
   export let value = '';
