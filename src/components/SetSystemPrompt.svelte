@@ -48,7 +48,7 @@
   class="w-full px-2 bg-transparent text-white rounded focus:outline-none text-sm flex items-center"
 >
   <Settings class="size-4 mr-2" />
-  <span>Change system prompt</span>
+  <span>System prompt</span>
 </button>
 
 {#if dialogOpen}

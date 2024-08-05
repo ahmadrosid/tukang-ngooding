@@ -12,7 +12,7 @@ export const supportedExtensions: Record<string, string> = {
 
 const allowedExtensions = Object.keys(supportedExtensions);
 
-const currentDirectory: string = env.CURRENT_DIRECTORY || "";
+const currentDirectory: string = process.env.CURRENT_DIRECTORY || env.CURRENT_DIRECTORY || "";
 
 export async function resolveAndValidateFilePath(filePath: string): Promise<string> {
   const fullPath = path.resolve(currentDirectory, filePath);

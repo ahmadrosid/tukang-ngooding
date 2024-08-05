@@ -4,7 +4,7 @@ import { promises as fs } from 'fs';
 import { env } from '$env/dynamic/private';
 import { resolveAndValidateFilePath } from "$lib/+serverUtils";
 
-const currentDirectory = env.CURRENT_DIRECTORY || '';
+const currentDirectory = process.env.CURRENT_DIRECTORY || env.CURRENT_DIRECTORY || '';
 
 export const POST = async ({ request }: any) => {
     const { fileName, content } = await request.json();

@@ -1,9 +1,11 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onMount } from "svelte";
   import Node from "./Node.svelte";
-  import { transformToTreeNodes, type TreeNode } from '$lib/file_utils';
-  import { fetchFileTree } from '$lib/api';
+  import { transformToTreeNodes, type TreeNode } from "$lib/file_utils";
+  import { fetchFileTree } from "$lib/api";
+  import { projectRoot } from '$lib/store';
 
+  let error = "";
   let tree: TreeNode = {
     label: "root",
     children: [],
@@ -22,7 +24,10 @@
   }
   initTreeMap(tree);
 
-  function rebuildChildren(node: TreeNode, checkAsParent: boolean = true): void {
+  function rebuildChildren(
+    node: TreeNode,
+    checkAsParent: boolean = true
+  ): void {
     if (node.children) {
       for (const child of node.children) {
         if (checkAsParent) child.checked = !!node.checked;
@@ -51,9 +56,8 @@
         parent.indeterminate = false;
         parent.checked = true;
       } else {
-        const haveCheckedOrIndetermine = parent.children?.some(
-          (c) => !!c.checked || c.indeterminate
-        ) ?? false;
+        const haveCheckedOrIndetermine =
+          parent.children?.some((c) => !!c.checked || c.indeterminate) ?? false;
         if (haveCheckedOrIndetermine) {
           parent.indeterminate = true;
         } else {
@@ -70,18 +74,37 @@
   // init the tree state
   rebuildTree({ detail: { node: tree } }, false);
 
-  onMount(async () => {
-    const result = await fetchFileTree();
-    if (result) {
-      tree = {
-        label: result.rootFolder,
-        children: transformToTreeNodes(result),
-        expanded: true,
-      };
+  async function refreshFileTree() {
+    const currentRoot = $projectRoot;
+    try {
+        const result = await fetchFileTree(currentRoot);
+        if (result) {
+            tree = {
+                label: result.rootFolder,
+                children: transformToTreeNodes(result),
+                expanded: true,
+            };
+            error = "";
+        } else {
+            error = "No files found."
+        }
+    } catch (e) {
+        error = "Error fetching file tree.";
+        console.error("Error fetching file tree:", e);
     }
-  });
+}
+
+onMount(refreshFileTree);
+
+$: if ($projectRoot) {
+    refreshFileTree();
+}
 </script>
 
 <div class="py-2 -ml-4 text-sm max-h-[70vh] overflow-y-auto scrollbar-hide">
-  <Node {tree} on:toggle={rebuildTree} />
+  {#if error}
+    <p class="text-red-500 px-4">{error}</p>
+  {:else}
+    <Node {tree} on:toggle={rebuildTree} />
+  {/if}
 </div>
