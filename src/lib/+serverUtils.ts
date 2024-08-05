@@ -12,15 +12,19 @@ export const supportedExtensions: Record<string, string> = {
 
 const allowedExtensions = Object.keys(supportedExtensions);
 
-const currentDirectory: string = process.env.CURRENT_DIRECTORY || env.CURRENT_DIRECTORY || "";
+export function getCurrentDirectory(): string {
+  return process.env.CURRENT_DIRECTORY || env.CURRENT_DIRECTORY || "";
+}
 
 export async function resolveAndValidateFilePath(filePath: string): Promise<string> {
+  const currentDirectory = getCurrentDirectory();
   const fullPath = path.resolve(currentDirectory, filePath);
   await fs.access(fullPath);
   return fullPath;
 }
 
 async function validateAndResolvePath(filePath: string): Promise<string> {
+  const currentDirectory = getCurrentDirectory();
   const fullPath = path.resolve(currentDirectory, filePath);
   
   if (!fullPath.startsWith(currentDirectory) || 
@@ -36,7 +40,7 @@ async function readFile(filePath: string): Promise<string> {
   return fs.readFile(filePath, "utf-8");
 }
 
-async function writeFile(filePath: string, content: string): Promise<void> {
+export async function writeFile(filePath: string, content: string): Promise<void> {
   await fs.writeFile(filePath, content, "utf-8");
 }
 

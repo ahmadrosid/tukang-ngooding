@@ -1,7 +1,6 @@
 import { json } from "@sveltejs/kit";
 import path from "path";
-import { promises as fs } from "fs";
-import { resolveAndValidateFilePath } from "$lib/+serverUtils.js";
+import { resolveAndValidateFilePath, writeFile } from "$lib/+serverUtils.js";
 
 export async function PUT({ request }) {
   const body = await request.json();
@@ -17,7 +16,7 @@ export async function PUT({ request }) {
   try {
     const encodedFilePath = decodeURIComponent(filePath);
     const fullPath = await resolveAndValidateFilePath(encodedFilePath);
-    await fs.writeFile(fullPath, content, "utf-8");
+    await writeFile(fullPath, content);
     return json({
       message: "File updated successfully",
       name: path.basename(fullPath),
