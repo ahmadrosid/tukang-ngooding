@@ -47,8 +47,8 @@
   on:click={openDialog}
   class="w-full px-2 bg-transparent text-white rounded focus:outline-none text-sm flex items-center"
 >
-  <Settings class="h-4 w-4 mr-2" />
-  <span>Set system prompt</span>
+  <Settings class="size-4 mr-2" />
+  <span>Change system prompt</span>
 </button>
 
 {#if dialogOpen}
@@ -59,6 +59,7 @@
         bind:value={tempSystemPrompt}
         bind:this={textareaElement}
         on:input={autoResize}
+        rows="4"
         placeholder="Enter your custom system prompt here..."
         class="w-full p-2 bg-neutral-700 rounded text-white text-sm focus:outline-none resize-none mb-4"
       />

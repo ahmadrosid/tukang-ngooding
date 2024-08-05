@@ -64,17 +64,17 @@
     <div class="min-h-screen text-sm">
       <div class="max-w-4xl mx-auto w-full space-y-4 p-2 py-4">
         <SetSystemPrompt on:update={e => customSystemPrompt = e.detail} />
-        {#if filePath}
-          <div class="p-2 text-xs text-neutral-400 sticky top-0 bg-neutral-900">
-            Context file: <span class="font-semibold">{filePath}</span>
-          </div>
-        {/if}
         {#each $messages as message}
           <MessageItem {message} />
         {/each}
       </div>
     </div>
     <div class="sticky bottom-0 inset-x-0 w-full">
+      {#if filePath}
+        <div class="p-2 text-xs text-neutral-400 sticky top-0 bg-neutral-900">
+          Context file: <span class="font-semibold">{filePath}</span>
+        </div>
+      {/if}
       <form
         on:submit={handleFormSubmit}
         class="max-w-4xl w-full mx-auto"

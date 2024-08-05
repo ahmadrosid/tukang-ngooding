@@ -1,4 +1,7 @@
 <script lang="ts">
+  import Copy from 'lucide-svelte/icons/copy';
+  import Play from 'lucide-svelte/icons/play';
+
   let pre: HTMLPreElement;
   let showCopied = false;
 
@@ -9,6 +12,11 @@
       setTimeout(() => (showCopied = false), 2000);
     }
   }
+
+  function applyCode() {
+    // Implement the apply functionality here
+    console.log("Apply button clicked");
+  }
 </script>
 
 <div class="p-0 bg-neutral-900 rounded-lg overflow-hidden font-mono">
@@ -16,16 +24,26 @@
     class="flex justify-between items-center px-4 py-2 bg-neutral-700/75 text-neutral-400 -mb-6"
   >
     <span class="text-xs"></span>
-    <button
-      on:click={copyToClipboard}
-      class="text-xs px-2 py-1 rounded hover:bg-neutral-700 transition-colors duration-200"
-    >
-      {#if showCopied}
-        <span class="text-neutral-400">Copied!</span>
-      {:else}
-        Copy
-      {/if}
-    </button>
+    <div class="flex items-center space-x-2">
+      <button
+        on:click={applyCode}
+        class="text-xs px-2 py-1 rounded hover:bg-neutral-700 transition-colors duration-200 flex items-center"
+      >
+        <Play size={14} class="mr-1" />
+        Apply
+      </button>
+      <button
+        on:click={copyToClipboard}
+        class="text-xs px-2 py-1 rounded hover:bg-neutral-700 transition-colors duration-200 flex items-center"
+      >
+        {#if showCopied}
+          <span class="text-neutral-400">Copied!</span>
+        {:else}
+          <Copy size={14} class="mr-1" />
+          Copy
+        {/if}
+      </button>
+    </div>
   </div>
   <pre bind:this={pre}><slot /></pre>
 </div>
