@@ -9,16 +9,31 @@
   let dialogOpen = false;
   let newRootFolder = "";
   let error = "";
+  let recentRoots: string[] = [];
 
   onMount(() => {
     const storedRoot = localStorage.getItem("projectRoot");
     if (storedRoot) {
       newRootFolder = storedRoot;
     }
+    loadRecentRoots();
   });
+
+  function loadRecentRoots() {
+    const storedHistory = localStorage.getItem("recentProjectRoots");
+    if (storedHistory) {
+      recentRoots = JSON.parse(storedHistory);
+    }
+  }
+
+  function updateRecentRoots(root: string) {
+    recentRoots = [root, ...recentRoots.filter(r => r !== root)].slice(0, 5);
+    localStorage.setItem("recentProjectRoots", JSON.stringify(recentRoots));
+  }
 
   async function handleUpdateRootFolder() {
     localStorage.setItem("projectRoot", newRootFolder);
+    updateRecentRoots(newRootFolder);
     const response = await fetch("/api/set-project-root", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -36,7 +51,14 @@
 
   function openDialog() {
     dialogOpen = true;
+    loadRecentRoots();
   }
+
+  async function selectRecentRoot(root: string) {
+    newRootFolder = root;
+    await handleUpdateRootFolder();
+  }
+
 </script>
 
 <button
@@ -77,6 +99,25 @@
           <p class="text-xs text-red-500">{error}</p>
         {/if}
       </div>
+      
+      {#if recentRoots.length > 0}
+        <div class="mt-4">
+          <h3 class="text-sm font-medium text-white mb-2">Recent Roots</h3>
+          <ul class="space-y-1">
+            {#each recentRoots as root}
+              <li>
+                <button
+                  on:click={() => selectRecentRoot(root)}
+                  class="text-sm text-gray-300 hover:text-white focus:outline-none"
+                >
+                  {root}
+                </button>
+              </li>
+            {/each}
+          </ul>
+        </div>
+      {/if}
+
       <div class="flex justify-end mt-4 space-x-2">
         <button
           on:click={() => (dialogOpen = false)}
