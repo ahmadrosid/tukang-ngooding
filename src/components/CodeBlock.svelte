@@ -1,6 +1,7 @@
 <script lang="ts">
   import Copy from 'lucide-svelte/icons/copy';
   import Play from 'lucide-svelte/icons/play';
+  import { codeStore, updateCode, type CodeStoreType } from "$lib/code_store";
 
   let pre: HTMLPreElement;
   let showCopied = false;
@@ -14,8 +15,11 @@
   }
 
   function applyCode() {
-    // Implement the apply functionality here
-    console.log("Apply button clicked");
+    if (pre) {
+      const codeContent = pre.textContent || "";
+      updateCode({ ...($codeStore), code: codeContent });
+      console.log("Code applied:", codeContent);
+    }
   }
 </script>
 
@@ -23,7 +27,7 @@
   <div
     class="flex justify-between items-center px-4 py-2 bg-neutral-700/75 text-neutral-400 -mb-6"
   >
-    <span class="text-xs"></span>
+    <div></div>
     <div class="flex items-center space-x-2">
       <button
         on:click={applyCode}

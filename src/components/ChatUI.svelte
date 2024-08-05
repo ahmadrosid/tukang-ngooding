@@ -3,6 +3,7 @@
   import { useChat } from "@ai-sdk/svelte";
   import MessageItem from "./MessageItem.svelte";
   import SetSystemPrompt from "./SetSystemPrompt.svelte";
+  import Trash from 'lucide-svelte/icons/trash-2';
 
   export let filePath: string;
 
@@ -14,7 +15,7 @@
     systemPrompt?: string;
   }
 
-  const { input, handleSubmit, messages, stop, isLoading } = useChat({
+  const { input, handleSubmit, messages, stop, isLoading, setMessages } = useChat({
     initialMessages: [
       {
         id: "1",
@@ -44,6 +45,14 @@
     autoResize();
   }
 
+  function clearMessages() {
+    setMessages([{
+      id: "1",
+      content: `Hi, I'm Tukang Ngooding! How can I help you today?`,
+      role: "assistant",
+    }]);
+  }
+
   onMount(() => {
     if (textareaElement) {
       textareaElement.addEventListener("keydown", (e) => {
@@ -70,11 +79,21 @@
       </div>
     </div>
     <div class="sticky bottom-0 inset-x-0 w-full">
-      {#if filePath}
-        <div class="p-2 text-xs text-neutral-400 sticky top-0 bg-neutral-900">
-          Context file: <span class="font-semibold">{filePath}</span>
+      <div class="p-2 text-xs text-neutral-400 sticky top-0 bg-neutral-900 flex justify-between items-center">
+        <div>
+        {#if filePath}
+            Context file: <span class="font-semibold">{filePath}</span>
+            {/if}
         </div>
-      {/if}
+        <button
+            on:click={clearMessages}
+            class="text-xs text-neutral-400 rounded-lg px-2 py-1 transition-colors duration-300 ease-in-out hover:text-neutral-200 focus:outline-none flex items-center"
+            >
+            <Trash size={14} class="mr-1" />
+            Clear messages
+        </button>
+
+      </div>
       <form
         on:submit={handleFormSubmit}
         class="max-w-4xl w-full mx-auto"
