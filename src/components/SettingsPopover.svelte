@@ -75,7 +75,7 @@
         </div>
 
         {#if activeTab === "root"}
-          <ProjectRootSelector on:cancel={closePopover} />
+          <ProjectRootSelector on:cancel={closePopover} on:updateRoot={closePopover} />
         {:else if activeTab === "system"}
           <div class="mb-4 space-y-2">
             <label

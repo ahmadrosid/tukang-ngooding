@@ -18,9 +18,11 @@ export async function GET(request) {
     const encodedFilePath = decodeURIComponent(filePath);
     const fullPath = await resolveAndValidateFilePath(encodedFilePath);
 
-    const extension = path.extname(fullPath).slice(1).toLowerCase();
+    let extension = path.extname(fullPath).slice(1).toLowerCase();
+    if (filePath === 'Makefile') {
+      extension = 'bash';
+    }
 
-    // Check if the file extension is supported
     if (!(extension in supportedExtensions)) {
       return json(
         { error: "Unsupported file type" },
@@ -28,7 +30,6 @@ export async function GET(request) {
       );
     }
 
-    // Read the file contents
     const content = await fs.readFile(fullPath, "utf-8");
 
     return json({
