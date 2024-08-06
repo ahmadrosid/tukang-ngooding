@@ -2,7 +2,8 @@
   import type { TreeNode } from "$lib/file-utils";
   import { updateCode } from "$lib/code_store";
   import { fetchFileContent } from '$lib/api';
-  import { Folder, File } from 'lucide-svelte';
+  import Folder from 'lucide-svelte/icons/folder';
+  import File from 'lucide-svelte/icons/file';
 
   export let tree;
   const toggleExpansion = () => {
