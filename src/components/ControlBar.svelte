@@ -29,17 +29,17 @@
       <span class="text-xs">Add file</span>
     </button>
     {#if $filePaths.length > 0}
-      <span class="mr-2">Context files:</span>
+      <span>Context files:</span>
       {#if $filePaths.length > 1}
         <button
           on:click={handleAddFile}
-          class="font-semibold mr-2 hover:underline cursor-pointer"
+          class="font-semibold hover:underline cursor-pointer"
         >
           {$filePaths.length} files
         </button>
       {:else}
         {#each $filePaths as filePath}
-          <span class="font-semibold mr-2">{filePath}</span>
+          <span class="font-semibold ">{filePath}</span>
         {/each}
       {/if}
     {/if}
