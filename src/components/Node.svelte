@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { TreeNode } from "$lib/file_utils";
+  import type { TreeNode } from "$lib/file-utils";
   import { updateCode } from "$lib/code_store";
   import { fetchFileContent } from '$lib/api';
   import { Folder, File } from 'lucide-svelte';

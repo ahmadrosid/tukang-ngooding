@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import Node from "./Node.svelte";
-  import { transformToTreeNodes, type TreeNode } from "$lib/file_utils";
+  import { transformToTreeNodes, type TreeNode } from "$lib/file-utils";
   import { fetchFileTree } from "$lib/api";
   import { projectRoot } from '$lib/project-root-store';
 
