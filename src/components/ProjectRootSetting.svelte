@@ -9,7 +9,6 @@
   let newRootFolder = "";
   let error = "";
   let recentRoots: string[] = [];
-  let folderInput: HTMLInputElement;
 
   onMount(() => {
     const storedRoot = localStorage.getItem("projectRoot");
@@ -53,18 +52,19 @@
     await handleUpdateRootFolder();
   }
 
-  function openFolderDialog() {
-    folderInput.click();
-  }
+  async function openFolderDialog() {
+    try {
+      const directoryHandle = await window.showDirectoryPicker();
 
-  function handleFolderSelection(event: Event) {
-    const target = event.target as HTMLInputElement;
-    if (target.files && target.files.length > 0) {
-      const file = target.files[0];
-      const absolutePath = file.name;
-      newRootFolder = absolutePath;
+      // TODO: get the full path, currently only the name is returned
+      // we might need to creat custom api to get the full path
+      newRootFolder = directoryHandle.name;
+    } catch (err) {
+      console.error("Error selecting folder:", err);
+      error = "Failed to select folder. Please try again.";
     }
   }
+
 </script>
 
 <div>
@@ -91,12 +91,6 @@
       for="projectRoot"
       class="block text-sm font-medium text-white mb-2">Select Project Root Folder</label
     >
-    <input
-      type="file"
-      bind:this={folderInput}
-      on:change={handleFolderSelection}
-      class="hidden"
-    />
     <div class="flex">
       <input
         id="projectRoot"
@@ -104,6 +98,7 @@
         bind:value={newRootFolder}
         class="bg-neutral-700 rounded-l text-white text-sm focus:outline-none w-full p-2"
         placeholder="No folder selected"
+        readonly
       />
       <button
         on:click={openFolderDialog}
@@ -131,5 +126,4 @@
       </button>
     </div>
   </div>
-  
 </div>
