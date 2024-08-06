@@ -7,7 +7,7 @@ export const supportedExtensions: Record<string, string> = {
   css: "CSS", json: "JSON", md: "Markdown", py: "Python",
   java: "Java", c: "C", cpp: "C++", go: "Go", rs: "Rust",
   sql: "SQL", xml: "XML", yaml: "YAML", sh: "Shell",
-  svelte: "Svelte", php: "PHP", mod: 'yaml', bash: 'bash'
+  svelte: "Svelte", php: "PHP", mod: 'yaml', bash: 'bash', tsx: 'TypeScript', jsx: 'JavaScript'
 };
 
 const allowedExtensions = Object.keys(supportedExtensions);

@@ -29,7 +29,7 @@
       }
     }
   }
-  
+
   onMount(() => {
     return () => {
       if (editor) {

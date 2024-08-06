@@ -1,27 +1,33 @@
 <script lang="ts">
   import { PaneGroup, Pane, PaneResizer } from "paneforge";
+  import XIcon from "lucide-svelte/icons/x";
   import ChatUI from "../components/ChatUI.svelte";
   import CodeEditor from "../components/CodeEditor.svelte";
-  import { codeStore, resetCode, updateCode, type CodeStoreType } from "$lib/code-store";
+  import {
+    codeStore,
+    resetCode,
+    updateCode,
+    type CodeStoreType,
+  } from "$lib/code-store";
   import { filePaths } from "$lib/file-path-store";
   import AddFileContext from "../components/AddFileContext.svelte";
-	import { projectRoot } from '$lib/project-root-store';
+  import { projectRoot } from "$lib/project-root-store";
 
   let leftSize = 50;
   let rightSize = 50;
   let showAddFileContext = false;
   let codeValue: CodeStoreType;
-	let currentRoot: string;
+  let currentRoot: string;
 
   $: if ($projectRoot !== currentRoot) {
-		currentRoot = $projectRoot;
-		resetCode();
-	}
+    currentRoot = $projectRoot;
+    resetCode();
+  }
 
   $: {
     codeValue = $codeStore;
     if (codeValue?.path && !$filePaths.includes(codeValue.path)) {
-      filePaths.update(paths => [...paths, codeValue.path]);
+      filePaths.update((paths) => [...paths, codeValue.path]);
     }
   }
 
@@ -50,7 +56,7 @@
 <PaneGroup direction="horizontal" class="w-full">
   <Pane defaultSize={leftSize}>
     <div class="px-4">
-      <ChatUI on:addFile={() => showAddFileContext = true} />
+      <ChatUI on:addFile={() => (showAddFileContext = true)} />
     </div>
   </Pane>
   <PaneResizer
@@ -58,10 +64,13 @@
   />
   <Pane defaultSize={rightSize}>
     <div class="h-full">
-      <div class="p-2 text-sm">
-        <p>
-          {codeValue?.fileName}
-        </p>
+      <div class="flex items-center">
+        {#if codeValue?.fileName}
+          <button on:click={resetCode} class="text-xs hover:text-rose-500 p-2"
+            ><XIcon size={16} /></button
+          >
+        {/if}
+        <span class="text-sm py-2">{codeValue?.fileName}</span>
       </div>
       <CodeEditor
         language={getLanguage(codeValue)}
