@@ -112,7 +112,6 @@
         bind:value={newRootFolder}
         class="bg-neutral-700 rounded-l text-white text-sm focus:outline-none w-full p-2"
         placeholder="No folder selected"
-        readonly
       />
       <button
         on:click={openFolderDialog}
