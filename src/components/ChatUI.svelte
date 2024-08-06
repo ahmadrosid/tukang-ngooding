@@ -3,28 +3,29 @@
   import { useChat } from "@ai-sdk/svelte";
   import MessageItem from "./MessageItem.svelte";
   import SetSystemPrompt from "./SetSystemPrompt.svelte";
-  import Trash from 'lucide-svelte/icons/trash-2';
+  import Trash from "lucide-svelte/icons/trash-2";
   import ProjectRootSelector from "./ProjectRootSelector.svelte";
 
   export let filePath: string;
 
   let textareaElement: HTMLTextAreaElement;
-  let customSystemPrompt: string = '';
+  let customSystemPrompt: string = "";
 
   type ChatBody = {
     file?: string;
     systemPrompt?: string;
-  }
+  };
 
-  const { input, handleSubmit, messages, stop, isLoading, setMessages } = useChat({
-    initialMessages: [
-      {
-        id: "1",
-        content: `Hi, I'm Tukang Ngooding! How can I help you today?`,
-        role: "assistant",
-      },
-    ],
-  });
+  const { input, handleSubmit, messages, stop, isLoading, setMessages } =
+    useChat({
+      initialMessages: [
+        {
+          id: "1",
+          content: `Hi, I'm Tukang Ngooding! How can I help you today?`,
+          role: "assistant",
+        },
+      ],
+    });
 
   function autoResize() {
     if (textareaElement) {
@@ -36,10 +37,10 @@
   function handleFormSubmit(e: Event) {
     e.preventDefault();
     let body: ChatBody = {};
-    if (customSystemPrompt !== '') {
+    if (customSystemPrompt !== "") {
       body.systemPrompt = customSystemPrompt;
     }
-    if (filePath !== '') {
+    if (filePath !== "") {
       body.file = filePath;
     }
     handleSubmit(e, { body });
@@ -47,11 +48,13 @@
   }
 
   function clearMessages() {
-    setMessages([{
-      id: "1",
-      content: `Hi, I'm Tukang Ngooding! How can I help you today?`,
-      role: "assistant",
-    }]);
+    setMessages([
+      {
+        id: "1",
+        content: `Hi, I'm Tukang Ngooding! How can I help you today?`,
+        role: "assistant",
+      },
+    ]);
   }
 
   onMount(() => {
@@ -74,7 +77,7 @@
     <div class="min-h-screen text-sm">
       <div class="max-w-4xl mx-auto w-full space-y-4 p-2 py-4">
         <div class="flex justify-between items-center">
-          <SetSystemPrompt on:update={e => customSystemPrompt = e.detail} />
+          <SetSystemPrompt on:update={(e) => (customSystemPrompt = e.detail)} />
           <div class="ml-auto">
             <ProjectRootSelector on:updateRoot />
           </div>
@@ -85,29 +88,27 @@
       </div>
     </div>
     <div class="sticky bottom-0 inset-x-0 w-full">
-      
-      <div class="p-2 text-xs text-neutral-400 sticky top-0 bg-neutral-900 flex justify-between items-center">
-  <div>
-    {#if filePath}
-      Context file: <span class="font-semibold">{filePath}</span>
-    {/if}
-  </div>
-  
-  {#if $messages.length > 1}
-    <button
-      on:click={clearMessages}
-      class="text-xs text-neutral-400 rounded-lg px-2 py-1 transition-colors duration-300 ease-in-out hover:text-neutral-200 focus:outline-none flex items-center"
-    >
-      <Trash size={14} class="mr-1" />
-      Clear messages
-    </button>
-  {/if}
-</div>
-
-      <form
-        on:submit={handleFormSubmit}
-        class="max-w-4xl w-full mx-auto"
+      <div
+        class="p-2 text-xs text-neutral-400 sticky top-0 bg-neutral-900 flex justify-between items-center"
       >
+        <div>
+          {#if filePath}
+            Context file: <span class="font-semibold">{filePath}</span>
+          {/if}
+        </div>
+
+        {#if $messages.length > 1}
+          <button
+            on:click={clearMessages}
+            class="text-xs text-neutral-400 rounded-lg px-2 py-1 transition-colors duration-300 ease-in-out hover:text-neutral-200 focus:outline-none flex items-center"
+          >
+            <Trash size={14} class="mr-1" />
+            Clear messages
+          </button>
+        {/if}
+      </div>
+
+      <form on:submit={handleFormSubmit} class="max-w-4xl w-full mx-auto">
         <div
           class="flex p-3 pb-6 bg-neutral-800 rounded-t-xl border border-neutral-700/60 w-full"
         >
