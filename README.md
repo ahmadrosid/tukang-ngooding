@@ -14,7 +14,7 @@ git clone https://github.com/ahmadrosid/tukang-ngooding.git
 ```
 cp .env.example .env.local
 ```
-Make sure to setup `ANTHROPIC_API_KEY=` abd `CURRENT_DIRECTORY=`
+Make sure to setup `ANTHROPIC_API_KEY=` and `CURRENT_DIRECTORY=`
 
 3. Install dependency with your favourite package manager
 ```
