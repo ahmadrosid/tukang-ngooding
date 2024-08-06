@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { createEventDispatcher } from "svelte";
+  import { llmProvider } from '$lib/llm-provider-store';
 
   const dispatch = createEventDispatcher();
 
@@ -9,13 +10,14 @@
   let openaiApiKey: string;
 
   onMount(() => {
-    currentProvider = localStorage.getItem('llmProvider') as "anthropic" | "openai" || 'anthropic';
+    llmProvider.initialize();
+    currentProvider = $llmProvider;
     anthropicApiKey = localStorage.getItem('anthropicApiKey') || '';
     openaiApiKey = localStorage.getItem('openaiApiKey') || '';
   });
 
   function saveProvider() {
-    localStorage.setItem('llmProvider', currentProvider);
+    llmProvider.set(currentProvider);
     if (currentProvider === 'anthropic') {
       localStorage.setItem('anthropicApiKey', anthropicApiKey);
     } else {

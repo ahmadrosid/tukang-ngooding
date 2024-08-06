@@ -1,18 +1,13 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount } from "svelte";
+  import { createEventDispatcher } from "svelte";
   import PlusIcon from "lucide-svelte/icons/plus";
   import Trash from "lucide-svelte/icons/trash-2";
   import { filePaths } from "$lib/file-path-store";
+  import { llmProvider } from '$lib/llm-provider-store';
 
   const dispatch = createEventDispatcher<{ addFile: void; clearMessages: void }>();
 
   export let messageCount: number;
-
-  let currentProvider: string = 'anthropic';
-
-  onMount(() => {
-    currentProvider = localStorage.getItem('llmProvider') || 'anthropic';
-  });
 
   function handleAddFile() {
     dispatch("addFile");
@@ -49,7 +44,7 @@
         {/each}
       {/if}
     {/if}
-    <span class="ml-2">llm: {currentProvider}</span>
+    <span class="ml-2">llm: {$llmProvider}</span>
   </div>
 
   {#if messageCount > 1}
