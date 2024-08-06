@@ -4,9 +4,11 @@
   import CodeEditor from "../components/CodeEditor.svelte";
   import { codeStore, updateCode, type CodeStoreType } from "$lib/code_store";
   import { filePaths } from "$lib/file-path-store";
+  import AddFileContext from "../components/AddFileContext.svelte";
 
   let leftSize = 50;
   let rightSize = 50;
+  let showAddFileContext = false;
 
   let codeValue: CodeStoreType;
 
@@ -42,7 +44,7 @@
 <PaneGroup direction="horizontal" class="w-full">
   <Pane defaultSize={leftSize}>
     <div class="px-4">
-      <ChatUI />
+      <ChatUI on:addFile={() => showAddFileContext = true} />
     </div>
   </Pane>
   <PaneResizer
@@ -65,3 +67,5 @@
     </div>
   </Pane>
 </PaneGroup>
+
+<AddFileContext bind:open={showAddFileContext} />

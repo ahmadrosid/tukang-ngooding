@@ -25,8 +25,8 @@ export const POST = (async ({ request }) => {
     newMessages = newMessages.slice(1);
   }
 
-  if (data.file) {
-    const systemMessage = await getSystemMessage(data.file);
+  if (data.files) {
+    const systemMessage = await getSystemMessage(data.files);
     const result = await streamText({
       model: anthropic("claude-3-5-sonnet-20240620"),
       system: systemMessage,
