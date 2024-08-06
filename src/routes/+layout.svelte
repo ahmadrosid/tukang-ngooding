@@ -5,8 +5,10 @@
   import FileSelectDialog from "../components/FileSelectDialog.svelte";
   import CreateFileDialog from "../components/CreateFileDialog.svelte";
   import Sidebar from "../components/Sidebar.svelte";
+  import SettingsPopover from "../components/SettingsPopover.svelte";
   import { updateCode } from "$lib/code_store";
 
+  let showSettings = false;
   let createFileDialogOpen = false;
 
   async function openFile(file: { name: string; type: string }): Promise<void> {
@@ -51,7 +53,7 @@
 </script>
 
 <div class="flex h-screen text-white font-sans">
-  <Sidebar on:createFile={() => (createFileDialogOpen = true)} />
+  <Sidebar on:createFile={() => (createFileDialogOpen = true)} bind:showSettings={showSettings} />
   <main class="flex-grow overflow-y-auto bg-neutral-900 relative">
     <slot></slot>
   </main>
@@ -64,4 +66,5 @@
     on:createFile={handleCreateFile}
     on:close={() => (createFileDialogOpen = false)}
   />
+  <SettingsPopover bind:show={showSettings} on:close={()=> showSettings = false} />
 </div>

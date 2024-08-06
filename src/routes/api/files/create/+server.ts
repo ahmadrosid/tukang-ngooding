@@ -1,9 +1,19 @@
 import { json } from '@sveltejs/kit';
 import path from 'path';
 import { promises as fs } from 'fs';
-import { resolveAndValidateFilePath, writeFile, getCurrentDirectory } from "$lib/+serverUtils";
+import { writeFile, getCurrentDirectory } from "$lib/+serverUtils";
 
 const currentDirectory = getCurrentDirectory();
+
+async function resolveFilePath(fileName: string): Promise<string> {
+    const fullPath = path.resolve(currentDirectory, fileName);
+    
+    if (!fullPath.startsWith(currentDirectory)) {
+        throw new Error("Access denied. Cannot create file outside the current directory.");
+    }
+    
+    return fullPath;
+}
 
 export const POST = async ({ request }: any) => {
     const { fileName, content } = await request.json();
@@ -13,7 +23,7 @@ export const POST = async ({ request }: any) => {
     }
 
     try {
-        const fullPath = await resolveAndValidateFilePath(fileName);
+        const fullPath = await resolveFilePath(fileName);
         const dirPath = path.dirname(fullPath);
         await fs.mkdir(dirPath, { recursive: true });
         await writeFile(fullPath, content || '');

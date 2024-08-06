@@ -37,14 +37,7 @@
     error = "";
 
     try {
-      const response = await createFile(fileName, content);
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.error || "Failed to create file");
-      }
-
+      const result = await createFile(fileName, content);
       dispatch("createFile", { fileName, content });
       closeDialog();
     } catch (err) {
