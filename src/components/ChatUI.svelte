@@ -83,7 +83,7 @@
       </div>
     </div>
     <div class="sticky bottom-0 inset-x-0 w-full">
-      <ControlBar messageCount={$messages.length} on:addFile />
+      <ControlBar messageCount={$messages.length} on:addFile on:clearMessages={clearMessages}/>
 
       <form on:submit={handleFormSubmit} class="max-w-4xl w-full mx-auto">
         <div

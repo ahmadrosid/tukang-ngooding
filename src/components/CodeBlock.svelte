@@ -25,7 +25,7 @@
 
 <div class="p-0 bg-neutral-900 rounded-lg overflow-hidden font-mono">
   <div
-    class="flex justify-between items-center px-4 py-2 bg-neutral-700/75 text-neutral-400 -mb-6"
+    class="flex justify-between items-center px-4 py-2 bg-neutral-700/75 text-neutral-400"
   >
     <div></div>
     <div class="flex items-center space-x-2">
@@ -49,5 +49,5 @@
       </button>
     </div>
   </div>
-  <pre bind:this={pre}><slot /></pre>
+  <pre class="my-0" bind:this={pre}><slot /></pre>
 </div>
