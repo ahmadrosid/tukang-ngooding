@@ -4,7 +4,6 @@
   import MessageItem from "./MessageItem.svelte";
   import SetSystemPrompt from "./SetSystemPrompt.svelte";
   import Trash from "lucide-svelte/icons/trash-2";
-  import ProjectRootSelector from "./ProjectRootSelector.svelte";
 
   export let filePath: string;
 
@@ -78,9 +77,6 @@
       <div class="max-w-4xl mx-auto w-full space-y-4 p-2 py-4">
         <div class="flex justify-between items-center">
           <SetSystemPrompt on:update={(e) => (customSystemPrompt = e.detail)} />
-          <div class="ml-auto">
-            <ProjectRootSelector on:updateRoot />
-          </div>
         </div>
         {#each $messages as message}
           <MessageItem {message} />
