@@ -5,7 +5,7 @@
   import FileSelectDialog from "../components/FileSelectDialog.svelte";
   import CreateFileDialog from "../components/CreateFileDialog.svelte";
   import Sidebar from "../components/Sidebar.svelte";
-  import SettingsPopover from "../components/SettingsPopover.svelte";
+  import SettingsPopover from "../components/SettingModal.svelte";
   import { updateCode } from "$lib/code-store";
 
   let showSettings = false;

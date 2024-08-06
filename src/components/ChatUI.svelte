@@ -12,6 +12,8 @@
   type ChatBody = {
     files?: string[];
     systemPrompt?: string;
+    provider?: string;
+    apiKey?: string;
   };
 
   const { input, handleSubmit, messages, stop, isLoading, setMessages } =
@@ -41,6 +43,13 @@
     if ($filePaths.length > 0) {
       body.files = $filePaths;
     }
+
+    const provider = localStorage.getItem('llmProvider') || 'anthropic';
+    const apiKey = localStorage.getItem(`${provider}ApiKey`) || '';
+
+    body.provider = provider;
+    body.apiKey = apiKey;
+
     handleSubmit(e, { body });
     autoResize();
   }

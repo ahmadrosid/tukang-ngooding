@@ -1,4 +1,6 @@
 import { createAnthropic } from "@ai-sdk/anthropic";
+import { createOpenAI } from '@ai-sdk/openai';
+
 import { streamText, type CoreMessage } from "ai";
 import type { RequestHandler } from "./$types";
 import { env } from "$env/dynamic/private";
@@ -6,6 +8,10 @@ import { getSystemMessage } from "$lib/+serverUtils";
 
 const anthropic = createAnthropic({
   apiKey: env.ANTHROPIC_API_KEY,
+});
+
+const openai = createOpenAI({
+  apiKey: env.OPENAI_API_KEY,
 });
 
 function extractCodeSnippets(text: string): string[] {
@@ -17,7 +23,7 @@ function extractCodeSnippets(text: string): string[] {
 
 export const POST = (async ({ request }) => {
   const data = await request.json();
-  const { messages } = data;
+  const { messages, provider, apiKey } = data;
 
   let newMessages: CoreMessage[] = messages;
 
@@ -25,10 +31,16 @@ export const POST = (async ({ request }) => {
     newMessages = newMessages.slice(1);
   }
 
+  const model = provider === 'openai' 
+    ? openai("gpt-4o")
+    : anthropic("claude-3-5-sonnet-20240620");
+
+  console.log(model);
+
   if (data.files) {
     const systemMessage = await getSystemMessage(data.files);
     const result = await streamText({
-      model: anthropic("claude-3-5-sonnet-20240620"),
+      model,
       system: systemMessage,
       messages: newMessages,
       onFinish: async ({ text }) => {
@@ -56,7 +68,7 @@ export const POST = (async ({ request }) => {
   if (data.systemPrompt) {
     console.log("Using system prompt:", data.systemPrompt);
     const result = await streamText({
-      model: anthropic("claude-3-5-sonnet-20240620"),
+      model,
       messages: newMessages,
       system: data.systemPrompt,
     });
@@ -64,7 +76,7 @@ export const POST = (async ({ request }) => {
   }
 
   const result = await streamText({
-    model: anthropic("claude-3-5-sonnet-20240620"),
+    model,
     messages: newMessages,
   });
 

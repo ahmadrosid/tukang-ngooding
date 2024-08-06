@@ -2,6 +2,7 @@
   import { createEventDispatcher } from "svelte";
   import XIcon from "lucide-svelte/icons/x";
   import ProjectRootSelector from "./ProjectRootSetting.svelte";
+  import LLMProviderSetting from "./LLMProviderSetting.svelte";
   import { fade } from "svelte/transition";
 
   const dispatch = createEventDispatcher();
@@ -10,7 +11,7 @@
 
   let systemPrompt: string = "";
   let rootFolder: string = "";
-  let activeTab: "root" | "system" = "root";
+  let activeTab: "root" | "system" | "llm" = "root";
 
   function closePopover() {
     show = false;
@@ -22,10 +23,16 @@
     closePopover();
   }
 
-  function setActiveTab(tab: "root" | "system") {
+  function setActiveTab(tab: "root" | "system" | "llm") {
     activeTab = tab;
   }
+
+  function handleUpdateProvider(event: CustomEvent<"anthropic" | "openai">) {
+    saveSettings();
+  }
 </script>
+
+<svelte:window on:keydown={(e) => e.key === "Escape" && closePopover()} />
 
 <div class:show class:hidden={!show}>
   <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions (intentionally using div for overlay) -->
@@ -34,7 +41,7 @@
     on:click|self={closePopover}
   >
     <div
-      class="bg-neutral-800 rounded-lg w-full max-w-4xl h-[80vh] shadow-lg flex"
+      class="bg-neutral-800 rounded-lg w-full max-w-[60vw] h-[80vh] shadow-lg flex"
       transition:fade={{ duration: 200 }}
     >
       <!-- Sidebar -->
@@ -57,6 +64,14 @@
               on:click={() => setActiveTab("system")}
             >
               System Prompt
+            </button>
+          </li>
+          <li>
+            <button
+              class={`w-full text-left py-2 px-4 rounded text-sm ${activeTab === "llm" ? "bg-neutral-700 text-white" : "text-gray-400 hover:bg-neutral-700 hover:text-white"}`}
+              on:click={() => setActiveTab("llm")}
+            >
+              LLM Provider
             </button>
           </li>
         </ul>
@@ -91,6 +106,18 @@
               rows="4"
             ></textarea>
           </div>
+          <div class="mt-6">
+            <button
+              on:click={saveSettings}
+              class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+            >
+              Save System Prompt
+            </button>
+          </div>
+        {:else if activeTab === "llm"}
+          <LLMProviderSetting 
+            on:updateProvider={handleUpdateProvider}
+          />
         {/if}
       </div>
     </div>
