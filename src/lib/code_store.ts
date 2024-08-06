@@ -25,3 +25,7 @@ export const codeStore = writable<CodeStoreType>(initialValue);
 export function updateCode(newCode: CodeStoreType) {
     codeStore.set(newCode);
 }
+
+export function resetCode() {
+    codeStore.set(initialValue);
+}

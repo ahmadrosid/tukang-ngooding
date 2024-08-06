@@ -2,15 +2,21 @@
   import { PaneGroup, Pane, PaneResizer } from "paneforge";
   import ChatUI from "../components/ChatUI.svelte";
   import CodeEditor from "../components/CodeEditor.svelte";
-  import { codeStore, updateCode, type CodeStoreType } from "$lib/code_store";
+  import { codeStore, resetCode, updateCode, type CodeStoreType } from "$lib/code_store";
   import { filePaths } from "$lib/file-path-store";
   import AddFileContext from "../components/AddFileContext.svelte";
+	import { projectRoot } from '$lib/project-root-store';
 
   let leftSize = 50;
   let rightSize = 50;
   let showAddFileContext = false;
-
   let codeValue: CodeStoreType;
+	let currentRoot: string;
+
+  $: if ($projectRoot !== currentRoot) {
+		currentRoot = $projectRoot;
+		resetCode();
+	}
 
   $: {
     codeValue = $codeStore;
