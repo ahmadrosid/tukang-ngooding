@@ -4,14 +4,17 @@
   import MessageItem from "./MessageItem.svelte";
   import SetSystemPrompt from "./SetSystemPrompt.svelte";
   import Trash from "lucide-svelte/icons/trash-2";
+  import PlusIcon from "lucide-svelte/icons/plus";
+  import { createEventDispatcher } from "svelte";
+  import { filePaths } from "$lib/file-path-store";
 
-  export let filePath: string;
+  const dispatch = createEventDispatcher<{ addFile: void }>();
 
   let textareaElement: HTMLTextAreaElement;
   let customSystemPrompt: string = "";
 
   type ChatBody = {
-    file?: string;
+    files?: string[];
     systemPrompt?: string;
   };
 
@@ -39,8 +42,8 @@
     if (customSystemPrompt !== "") {
       body.systemPrompt = customSystemPrompt;
     }
-    if (filePath !== "") {
-      body.file = filePath;
+    if ($filePaths.length > 0) {
+      body.files = $filePaths;
     }
     handleSubmit(e, { body });
     autoResize();
@@ -87,10 +90,24 @@
       <div
         class="p-2 text-xs text-neutral-400 sticky top-0 bg-neutral-900 flex justify-between items-center"
       >
-        <div>
-          {#if filePath}
-            Context file: <span class="font-semibold">{filePath}</span>
+        <div class="flex items-center">
+          {#if $filePaths.length > 0}
+            <span class="mr-2">Context files:</span>
+            {#if $filePaths.length > 1}
+              <span class="font-semibold mr-2">{$filePaths.length} files</span>
+            {:else}
+              {#each $filePaths as filePath}
+                <span class="font-semibold mr-2">{filePath}</span>
+              {/each}
+            {/if}
           {/if}
+          <button
+            on:click={() => dispatch('addFile')}
+            class="text-xs bg-neutral-700/50 text-neutral-200 rounded px-2 py-1 transition-colors duration-300 ease-in-out hover:bg-neutral-600 focus:outline-none flex items-center"
+          >
+            <PlusIcon class="mr-1 size-3" />
+            <span class="text-xs">Add file</span>
+          </button>
         </div>
 
         {#if $messages.length > 1}

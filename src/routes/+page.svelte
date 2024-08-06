@@ -3,16 +3,18 @@
   import ChatUI from "../components/ChatUI.svelte";
   import CodeEditor from "../components/CodeEditor.svelte";
   import { codeStore, updateCode, type CodeStoreType } from "$lib/code_store";
+  import { filePaths } from "$lib/file-path-store";
 
   let leftSize = 50;
   let rightSize = 50;
 
   let codeValue: CodeStoreType;
-  let filePath = "";
 
   $: {
     codeValue = $codeStore;
-    filePath = codeValue?.path || "";
+    if (codeValue?.path && !$filePaths.includes(codeValue.path)) {
+      filePaths.update(paths => [...paths, codeValue.path]);
+    }
   }
 
   function handleCodeChange(event: CustomEvent<string>) {
@@ -40,7 +42,7 @@
 <PaneGroup direction="horizontal" class="w-full">
   <Pane defaultSize={leftSize}>
     <div class="px-4">
-      <ChatUI {filePath} />
+      <ChatUI />
     </div>
   </Pane>
   <PaneResizer

@@ -44,25 +44,33 @@ export async function writeFile(filePath: string, content: string): Promise<void
   await fs.writeFile(filePath, content, "utf-8");
 }
 
-export async function getSystemMessage(filePath: string): Promise<string> {
-  const fullPath = await resolveAndValidateFilePath(filePath);
-  const extension = path.extname(fullPath).slice(1).toLowerCase();
+export async function getSystemMessage(filePaths: string[]): Promise<string> {
+  const fileContents = await Promise.all(filePaths.map(async (filePath) => {
+    const fullPath = await resolveAndValidateFilePath(filePath);
+    const extension = path.extname(fullPath).slice(1).toLowerCase();
 
-  if (!(extension in supportedExtensions)) {
-    throw new Error("Unsupported file type");
-  }
+    if (!(extension in supportedExtensions)) {
+      throw new Error(`Unsupported file type for ${filePath}`);
+    }
 
-  const contents = await readFile(fullPath);
-  return `Use the provided code to answer this question. 
-Answer succinctly and provide code snippets if needed.
-Use this format for code snippets:
+    const contents = await readFile(fullPath);
+    return { filePath, contents };
+  }));
 
+  const snippets = fileContents.map(({ filePath, contents }) => `
 ===
 ${filePath}
 \`\`\`
 ${contents}
 \`\`\`
 ===
+`).join('\n');
+
+  return `Use the provided code to answer this question. 
+Answer succinctly and provide code snippets if needed.
+Use this format for code snippets:
+
+${snippets}
 
 When user asking for code, give them the full code.`;
 }
