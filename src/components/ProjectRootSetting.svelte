@@ -4,11 +4,12 @@
   import { createEventDispatcher } from "svelte";
   import { projectRoot } from '$lib/store';
 
-  const dispatch = createEventDispatcher<{ updateRoot: string }>();
+  const dispatch = createEventDispatcher<{ updateRoot: string, cancel: void }>();
 
   let newRootFolder = "";
   let error = "";
   let recentRoots: string[] = [];
+  let folderInput: HTMLInputElement;
 
   onMount(() => {
     const storedRoot = localStorage.getItem("projectRoot");
@@ -52,6 +53,18 @@
     await handleUpdateRootFolder();
   }
 
+  function openFolderDialog() {
+    folderInput.click();
+  }
+
+  function handleFolderSelection(event: Event) {
+    const target = event.target as HTMLInputElement;
+    if (target.files && target.files.length > 0) {
+      const file = target.files[0];
+      const absolutePath = file.name;
+      newRootFolder = absolutePath;
+    }
+  }
 </script>
 
 <div>
@@ -76,28 +89,40 @@
   <div class="w-full bg-neutral-800 rounded-md p-4">
     <label
       for="projectRoot"
-      class="block text-sm font-medium text-white mb-2">Folder Path</label
+      class="block text-sm font-medium text-white mb-2">Select Project Root Folder</label
     >
+    <input
+      type="file"
+      bind:this={folderInput}
+      on:change={handleFolderSelection}
+      class="hidden"
+    />
     <div class="flex">
       <input
         id="projectRoot"
         type="text"
         bind:value={newRootFolder}
-        class="bg-neutral-700 rounded text-white text-sm focus:outline-none w-full p-2"
-        placeholder="Enter folder path (e.g., ./src)"
+        class="bg-neutral-700 rounded-l text-white text-sm focus:outline-none w-full p-2"
+        placeholder="No folder selected"
       />
       <button
-        on:click={handleUpdateRootFolder}
-        class="ml-2 p-2 text-white rounded hover:bg-orange-700 focus:outline-none"
+        on:click={openFolderDialog}
+        class="bg-neutral-600 text-white rounded-r px-4 py-2 hover:bg-neutral-500 focus:outline-none"
       >
-        <FolderIcon class="w-4 h-4" />
+        <FolderIcon class="size-4" />
       </button>
     </div>
     {#if error}
       <p class="text-xs py-4 text-red-500">{error}</p>
     {/if}
 
-    <div class="flex justify-end mt-4">
+    <div class="flex justify-end mt-4 space-x-2">
+      <button
+        on:click={() => dispatch('cancel')}
+        class="px-4 py-1.5 bg-neutral-600 text-white rounded hover:bg-neutral-500 focus:outline-none text-sm"
+      >
+        Cancel
+      </button>
       <button
         on:click={handleUpdateRootFolder}
         class="px-4 py-1.5 bg-orange-700 text-white rounded hover:bg-orange-600 focus:outline-none text-sm"

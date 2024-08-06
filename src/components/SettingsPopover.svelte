@@ -63,8 +63,8 @@
       </div>
 
       <!-- Content -->
-      <div class="w-3/4 p-6 bg-neutral-700/40 rounded-r-lg relative">
-        <div class="absolute top-4 right-6">
+      <div class="w-3/4 p-6 bg-neutral-700/40 rounded-r-lg relative overflow-auto scrollbar-hide">
+        <div class="absolute top-6 right-6">
           <button
             on:click={closePopover}
             class="text-gray-400 hover:text-white"
@@ -75,7 +75,7 @@
         </div>
 
         {#if activeTab === "root"}
-          <ProjectRootSelector />
+          <ProjectRootSelector on:cancel={closePopover} />
         {:else if activeTab === "system"}
           <div class="mb-4 space-y-2">
             <label
