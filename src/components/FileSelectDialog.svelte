@@ -2,7 +2,9 @@
 	import { createEventDispatcher, onMount } from 'svelte';
 	import Fuse from 'fuse.js';
   	import { fetchFileTree } from '$lib/api';
- 
+	import { projectRoot } from '$lib/project-root-store';
+	let currentRoot: string;
+
 	interface FileItem {
 		name: string;
 		type: 'folder' | 'file'
@@ -27,18 +29,6 @@
 	let selectedIndex = -1;
 
 	onMount(() => {
-		fetchFileTree().then(data => {
-			if (data) {
-				loading = false;
-				allFiles = data.files.filter((file) => file.type === 'file'); 
-				const options = {
-					keys: ['name'],
-					threshold: 0.4
-				};
-				fuse = new Fuse(allFiles, options);
-			}
-		});
-
 		window.addEventListener('keydown', handleKeydown);
 		return () => {
 			window.removeEventListener('keydown', handleKeydown);
@@ -109,6 +99,25 @@
 
 	$: if (open && searchInput) {
 		setTimeout(() => searchInput.focus(), 0);
+	}
+
+	$: if ($projectRoot !== currentRoot) {
+		currentRoot = $projectRoot;
+		if (typeof window !== 'undefined') {
+			fetchFileTree().then(data => {
+				if (data) {
+					loading = false;
+					allFiles = data.files.filter((file) => file.type === 'file');
+					const options = {
+						keys: ['name'],
+						threshold: 0.4
+					};
+					fuse = new Fuse(allFiles, options);
+					displayedFiles = allFiles;
+					selectedIndex = -1;
+				}
+			});
+		}
 	}
 </script>
 

@@ -3,7 +3,7 @@
   import FolderIcon from "lucide-svelte/icons/folder";
   import Trash from "lucide-svelte/icons/trash-2";
   import { createEventDispatcher } from "svelte";
-  import { projectRoot } from '$lib/store';
+  import { projectRoot } from '$lib/project-root-store';
 
   const dispatch = createEventDispatcher<{ updateRoot: string, cancel: void }>();
 

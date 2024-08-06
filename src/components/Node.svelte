@@ -2,6 +2,7 @@
   import type { TreeNode } from "$lib/file_utils";
   import { updateCode } from "$lib/code_store";
   import { fetchFileContent } from '$lib/api';
+  import { Folder, File } from 'lucide-svelte';
 
   export let tree;
   const toggleExpansion = () => {
@@ -44,10 +45,10 @@
     {#if tree.children}
       <button
         on:click={toggleExpansion}
-        class="w-full text-left hover:bg-neutral-700 rounded cursor-pointer p-2"
+        class="w-full text-left hover:bg-neutral-700 rounded cursor-pointer p-2 flex items-center"
         class:arrowDown={tree.expanded}
       >
-        <span class="mr-2"> 📂 </span>
+        <Folder class="mr-2" size={18} />
         <span>
           {trimString(tree.label, 20)}
         </span>
@@ -61,10 +62,10 @@
       </div>
     {:else}
       <button
-        class="w-full text-left hover:bg-neutral-700 rounded cursor-pointer p-2"
+        class="w-full text-left hover:bg-neutral-700 rounded cursor-pointer p-2 flex items-center"
         on:click={() => openFile(tree)}
       >
-        <span class="mr-2"> 📄 </span>
+        <File class="mr-2" size={18} />
         {trimString(tree.label, 20)}
       </button>
     {/if}

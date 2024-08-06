@@ -3,7 +3,7 @@
   import Node from "./Node.svelte";
   import { transformToTreeNodes, type TreeNode } from "$lib/file_utils";
   import { fetchFileTree } from "$lib/api";
-  import { projectRoot } from '$lib/store';
+  import { projectRoot } from '$lib/project-root-store';
 
   let error = "";
   let tree: TreeNode = {
