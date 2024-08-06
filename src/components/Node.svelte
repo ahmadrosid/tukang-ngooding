@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { TreeNode } from "$lib/file-utils";
-  import { updateCode } from "$lib/code_store";
+  import { updateCode } from "$lib/code-store";
   import { fetchFileContent } from '$lib/api';
   import Folder from 'lucide-svelte/icons/folder';
   import File from 'lucide-svelte/icons/file';

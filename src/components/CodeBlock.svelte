@@ -1,7 +1,7 @@
 <script lang="ts">
   import Copy from 'lucide-svelte/icons/copy';
   import Play from 'lucide-svelte/icons/play';
-  import { codeStore, updateCode, type CodeStoreType } from "$lib/code_store";
+  import { codeStore, updateCode, type CodeStoreType } from "$lib/code-store";
 
   let pre: HTMLPreElement;
   let showCopied = false;
