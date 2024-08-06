@@ -10,8 +10,14 @@ export type CodeStoreType = {
     isDirty: false
 }
 
+const tutorialCode = `// Your code will be displayed here
+// Use keyboard shortcut Cmd+P or Ctrl+P to open any file
+// Use keyboard shortcut Cmd+S or Ctrl+S to save the file
+// Start chatting with your code to get started
+`;
+
 const initialValue: CodeStoreType = {
-    code: '// Your code will be here',
+    code: tutorialCode,
     language: 'typescript',
     path: '',
     fileName: '',
