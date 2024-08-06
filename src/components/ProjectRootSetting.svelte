@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import FolderIcon from "lucide-svelte/icons/folder";
+  import Trash from "lucide-svelte/icons/trash-2";
   import { createEventDispatcher } from "svelte";
   import { projectRoot } from '$lib/store';
 
@@ -26,8 +27,10 @@
   }
 
   function updateRecentRoots(root: string) {
-    recentRoots = [root, ...recentRoots.filter(r => r !== root)].slice(0, 5);
-    localStorage.setItem("recentProjectRoots", JSON.stringify(recentRoots));
+    if (!recentRoots.includes(root)) {
+      recentRoots = [root, ...recentRoots].slice(0, 5);
+      localStorage.setItem("recentProjectRoots", JSON.stringify(recentRoots));
+    }
   }
 
   async function handleUpdateRootFolder() {
@@ -52,13 +55,17 @@
     await handleUpdateRootFolder();
   }
 
+  function deleteRecentRoot(root: string) {
+    recentRoots = recentRoots.filter(r => r !== root);
+    localStorage.setItem("recentProjectRoots", JSON.stringify(recentRoots));
+  }
+
   async function openFolderDialog() {
     try {
-      const directoryHandle = await window.showDirectoryPicker();
-
       // TODO: get the full path, currently only the name is returned
       // we might need to creat custom api to get the full path
-      newRootFolder = directoryHandle.name;
+      // newRootFolder = directoryHandle.name;
+      alert("not implemented yet");
     } catch (err) {
       console.error("Error selecting folder:", err);
       error = "Failed to select folder. Please try again.";
@@ -68,18 +75,25 @@
 </script>
 
 <div>
-  <h2 class="text-lg font-semibold text-white mb-4">Project Root Folder</h2>
+  <h2 class="text-base font-semibold text-white mb-4">Project Root Folder</h2>
   {#if recentRoots.length > 0}
-    <div class="mb-6 bg-neutral-800 rounded-md p-4">
+    <div class="mb-6 bg-neutral-800 rounded-md p-4 border border-neutral-600/35">
       <h3 class="text-sm font-semibold text-white mb-3">Recent Roots</h3>
       <ul class="space-y-2">
         {#each recentRoots as root}
-          <li>
+          <li class="flex items-center justify-between">
             <button
               on:click={() => selectRecentRoot(root)}
-              class="w-full text-left px-3 py-2 text-sm text-gray-300 bg-neutral-700/50 hover:text-white hover:bg-neutral-700 rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              class="flex-grow text-left px-3 py-2 text-sm text-gray-300 bg-neutral-700/50 hover:text-white hover:bg-neutral-700 rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
             >
               <span class="truncate block">{root}</span>
+            </button>
+            <button
+              on:click={() => deleteRecentRoot(root)}
+              class="ml-2 p-2 text-gray-400 hover:text-red-500 focus:outline-none"
+              aria-label="Delete recent root"
+            >
+              <Trash class="size-4" />
             </button>
           </li>
         {/each}
