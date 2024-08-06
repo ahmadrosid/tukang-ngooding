@@ -58,21 +58,21 @@ export async function getSystemMessage(filePaths: string[]): Promise<string> {
   }));
 
   const snippets = fileContents.map(({ filePath, contents }) => `
-===
-${filePath}
 \`\`\`
+// file_path: ${filePath}
 ${contents}
 \`\`\`
-===
 `).join('\n');
 
   return `Use the provided code to answer this question. 
-Answer succinctly and provide code snippets if needed.
-Use this format for code snippets:
 
 ${snippets}
 
-When user asking for code, give them the full code.`;
+Answer questions concisely and include relevant code snippets when appropriate.
+Use the provided code snippet formatting for any code you include in your responses.
+If the user requests code, provide the complete code needed to address their request.
+Don't forget to include the full_path in code snippets.
+`;
 }
 
 export async function updateFile(filePath: string, content: string): Promise<void> {
