@@ -40,19 +40,23 @@
         selectedFiles = new Set($filePaths);
 
         // Sort allFiles to put selected files first
-        allFiles.sort((a, b) => {
-          const aSelected = selectedFiles.has(a.name);
-          const bSelected = selectedFiles.has(b.name);
-          if (aSelected && !bSelected) return -1;
-          if (!aSelected && bSelected) return 1;
-          return 0;
-        });
+        sortAllFiles();
 
         // Initialize displayedFiles
         displayedFiles = allFiles;
       }
     });
   });
+
+  function sortAllFiles() {
+    allFiles.sort((a, b) => {
+      const aSelected = selectedFiles.has(a.name);
+      const bSelected = selectedFiles.has(b.name);
+      if (aSelected && !bSelected) return -1;
+      if (!aSelected && bSelected) return 1;
+      return 0;
+    });
+  }
 
   function handleSearch() {
     if (searchQuery.trim() === "") {
@@ -70,7 +74,9 @@
       } else {
         selectedFiles.add(file.name);
       }
-      selectedFiles = new Set(selectedFiles); // Trigger reactivity
+      selectedFiles = new Set(selectedFiles);
+      sortAllFiles();
+      displayedFiles = [...allFiles];
     }
   }
 
@@ -105,6 +111,8 @@
     selectedFiles.clear();
     selectedFiles = new Set(selectedFiles); // Trigger reactivity
     filePaths.set([]);
+    sortAllFiles();
+    displayedFiles = [...allFiles];
   }
 
   $: {
@@ -120,6 +128,15 @@
   }
 
   $: isFileSelected = (file: FileItem) => selectedFiles.has(file.name);
+
+  // Subscribe to changes in filePaths store
+  $: {
+    selectedFiles = new Set($filePaths);
+    if (allFiles.length > 0) {
+      sortAllFiles();
+      displayedFiles = [...allFiles];
+    }
+  }
 </script>
 
 <div
