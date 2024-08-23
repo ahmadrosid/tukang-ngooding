@@ -2,6 +2,7 @@
   import { createEventDispatcher } from "svelte";
   import FilePlusIcon from "lucide-svelte/icons/file-plus";
   import SettingsIcon from "lucide-svelte/icons/settings";
+  import GithubIcon from "lucide-svelte/icons/github"; // Impor ikon GitHub
   import FileTree from "./FileTree.svelte";
 
   const dispatch = createEventDispatcher();
@@ -24,13 +25,18 @@
   } md:translate-x-0`}
 >
   <div class="flex-grow">
-    <button on:click={toggleSidebar} class="font-bold">
-      <span
-        class="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-violet-500"
-      >
-        Tukang Ngooding
-      </span>
-    </button>
+    <div class="flex items-center justify-between">
+      <button on:click={toggleSidebar} class="font-bold flex items-center gap-2">
+        <span
+          class="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-violet-500"
+        >
+          Tukang Ngooding
+        </span>
+      </button>
+      <a href="https://github.com/ahmadrosid/tukang-ngooding" target="_blank" rel="noopener noreferrer">
+        <GithubIcon class="size-4" />
+      </a>
+    </div>
     <FileTree />
   </div>
   <div class="mt-auto flex items-center gap-2">
