@@ -71,7 +71,6 @@ ${snippets}
 Answer questions concisely and include relevant code snippets when appropriate.
 Use the provided code snippet formatting for any code you include in your responses.
 If the user requests code, provide the complete code needed to address their request.
-Don't forget to include the full_path in code snippets.
 `;
 }
 

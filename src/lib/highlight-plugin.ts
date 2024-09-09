@@ -10,7 +10,8 @@ import php from "highlight.js/lib/languages/php";
 import bash from "highlight.js/lib/languages/bash";
 import java from "highlight.js/lib/languages/java";
 import rust from "highlight.js/lib/languages/rust";
+import python from "highlight.js/lib/languages/python";
 
 export const highlightPlugin: Plugin = {
-  rehypePlugin: [rehypeHighlight, { languages: { typescript, javascript, xml, go, css, php, bash, java, rust, svelte } }],
+  rehypePlugin: [rehypeHighlight, { languages: { typescript, javascript, xml, go, css, php, bash, java, rust, svelte, python } }],
 };
