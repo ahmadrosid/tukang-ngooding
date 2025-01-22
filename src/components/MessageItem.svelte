@@ -5,7 +5,7 @@
   import CodeBlock from "./CodeBlock.svelte";
   const plugins: Plugin[] = [gfmPlugin(), highlightPlugin, { renderer: { pre: CodeBlock } }];
 
-  export let message;
+  let { message } = $props()
 </script>
 
 <div>

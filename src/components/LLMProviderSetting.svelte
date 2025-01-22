@@ -1,13 +1,12 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { createEventDispatcher } from "svelte";
   import { llmProvider } from '$lib/llm-provider-store';
 
-  const dispatch = createEventDispatcher();
+  let { updateProvider, cancel } = $props();
 
-  let currentProvider: "anthropic" | "openai";
-  let anthropicApiKey: string;
-  let openaiApiKey: string;
+  let currentProvider: "anthropic" | "openai" = $state("anthropic");
+  let anthropicApiKey: string = $state("");
+  let openaiApiKey: string = $state("");
 
   onMount(() => {
     llmProvider.initialize();
@@ -23,7 +22,7 @@
     } else {
       localStorage.setItem('openaiApiKey', openaiApiKey);
     }
-    dispatch("updateProvider", currentProvider);
+    updateProvider(currentProvider);
   }
 </script>
 
@@ -91,13 +90,13 @@
 
     <div class="flex justify-end mt-4 space-x-2">
       <button
-        on:click={() => dispatch('cancel')}
+        onclick={() => cancel()}
         class="px-4 py-1.5 bg-neutral-600 text-white rounded hover:bg-neutral-500 focus:outline-none text-sm"
       >
         Cancel
       </button>
       <button
-        on:click={saveProvider}
+        onclick={saveProvider}
         class="px-4 py-1.5 bg-orange-700 text-white rounded hover:bg-orange-600 focus:outline-none text-sm"
       >
         Save

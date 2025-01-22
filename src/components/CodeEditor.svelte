@@ -4,17 +4,15 @@
   import Loader2 from 'lucide-svelte/icons/loader'; 
   import { updateFile } from '$lib/api';
   
-  export let value = '';
-  export let language = '';
-  export let filePath = '';
-  export let theme: "vs-light" | "vs-dark" = "vs-light";
-  
-  let editorReady = false;
-  let editor: any;
+  let { value = $bindable(), language, filePath, theme, onCodeChange } = $props();
+
+  let editorReady = $state(false);
+  let editor: any | null = $state(null);
 
   function handleReady(event: CustomEvent) {
     editorReady = true;
     editor = event.detail.editor;
+    onCodeChange(event);
   }
   
   async function handleSave(event: KeyboardEvent) {
@@ -39,7 +37,7 @@
   });
 </script>
 
-<svelte:window on:keydown={handleSave} />
+<svelte:window onkeydown={handleSave} />
 
 {#if !editorReady}
 <div class="grid place-content-center w-full h-full">

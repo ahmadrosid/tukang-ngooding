@@ -4,18 +4,20 @@
   import { fetchFileContent } from '$lib/api';
   import Folder from 'lucide-svelte/icons/folder';
   import File from 'lucide-svelte/icons/file';
+	import Self from './Node.svelte'
 
-  export let tree;
-  const toggleExpansion = () => {
+  let { tree } = $props();
+
+  const toggleExpansion = (): void => {
     tree.expanded = !tree.expanded;
     openFile(tree);
   };
 
   function trimString(str: string, maxLength: number): string {
-      if (str.length <= maxLength) {
-          return str;
-      }
-      return str.slice(0, maxLength - 3) + '...';
+    if (str.length <= maxLength) {
+      return str;
+    }
+    return str.slice(0, maxLength - 3) + '...';
   }
 
   async function openFile(file: TreeNode): Promise<void> {
@@ -45,7 +47,7 @@
   <li>
     {#if tree.children}
       <button
-        on:click={toggleExpansion}
+        onclick={toggleExpansion}
         class="w-full text-left hover:bg-neutral-700 rounded cursor-pointer p-2 flex items-center"
         class:arrowDown={tree.expanded}
       >
@@ -57,14 +59,14 @@
       <div>
         {#if tree.expanded}
           {#each tree.children as child}
-            <svelte:self tree={child} on:toggle />
+            <Self tree={child} on:toggle />
           {/each}
         {/if}
       </div>
     {:else}
       <button
         class="w-full text-left hover:bg-neutral-700 rounded cursor-pointer p-2 flex items-center"
-        on:click={() => openFile(tree)}
+        onclick={() => openFile(tree)}
       >
         <File class="mr-2" size={18} />
         {trimString(tree.label, 20)}

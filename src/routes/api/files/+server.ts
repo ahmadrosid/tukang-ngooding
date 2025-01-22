@@ -3,8 +3,9 @@ import path from "path";
 import * as globby from "globby";
 import { promises as fs } from "fs";
 import { resolveAndValidateFilePath } from "$lib/+serverUtils";
+import type { RequestHandler } from './$types';
 
-export async function GET(request) {
+export const GET: RequestHandler = async ({ request }) => {
   const url = new URL(request.url);
   const folderName = url.searchParams.get("folder");
 

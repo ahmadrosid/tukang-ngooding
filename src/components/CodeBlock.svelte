@@ -30,14 +30,14 @@
     <div></div>
     <div class="flex items-center space-x-2">
       <button
-        on:click={applyCode}
+        onclick={applyCode}
         class="text-xs px-2 py-1 rounded hover:bg-neutral-700 transition-colors duration-200 flex items-center"
       >
         <Play size={14} class="mr-1" />
         Apply
       </button>
       <button
-        on:click={copyToClipboard}
+        onclick={copyToClipboard}
         class="text-xs px-2 py-1 rounded hover:bg-neutral-700 transition-colors duration-200 flex items-center"
       >
         {#if showCopied}

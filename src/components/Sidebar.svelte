@@ -1,21 +1,19 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
   import FilePlusIcon from "lucide-svelte/icons/file-plus";
   import SettingsIcon from "lucide-svelte/icons/settings";
-  import GithubIcon from "lucide-svelte/icons/github"; // Impor ikon GitHub
+  import GithubIcon from "lucide-svelte/icons/github"; 
   import FileTree from "./FileTree.svelte";
 
-  const dispatch = createEventDispatcher();
+  let { onCreateFile, showSettings } = $props();
 
-  let isSidebarOpen: boolean = true;
-  export let showSettings: boolean;
+  let isSidebarOpen: boolean = $state(true);
 
   function toggleSidebar(): void {
     isSidebarOpen = !isSidebarOpen;
   }
 
   function openCreateFileDialog(): void {
-    dispatch("createFile");
+    onCreateFile();
   }
 </script>
 
@@ -26,7 +24,7 @@
 >
   <div class="flex-grow">
     <div class="flex items-center justify-between">
-      <button on:click={toggleSidebar} class="font-bold flex items-center gap-2">
+      <button onclick={toggleSidebar} class="font-bold flex items-center gap-2">
         <span
           class="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-violet-500"
         >
@@ -41,7 +39,7 @@
   </div>
   <div class="mt-auto flex items-center gap-2">
     <button
-      on:click={openCreateFileDialog}
+      onclick={openCreateFileDialog}
       class="px-3 py-2 bg-neutral-700 text-white rounded hover:bg-neutral-600/50 focus:outline-none text-sm flex items-center gap-2 flex-grow"
     >
       <FilePlusIcon class="size-4" />
@@ -49,7 +47,7 @@
     </button>
     <div class="relative">
       <button
-        on:click={() => (showSettings = !showSettings)}
+        onclick={() => (showSettings = !showSettings)}
         class="p-2 bg-neutral-700 text-white rounded hover:bg-neutral-600/50 focus:outline-none"
       >
         <SettingsIcon class="size-4" />

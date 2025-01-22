@@ -30,7 +30,7 @@
 
 </script>
 
-<svelte:window on:keydown={handleKeydown} />
+<svelte:window onkeydown={handleKeydown} />
 
 <div class="p-3 text-sm text-white h-[250px] overflow-y-auto scrollbar-hide">
 	{#if loading}
@@ -48,7 +48,7 @@
 		{#each displayedFiles as file, index}
 			<li>
 				<button
-					on:click={() => selectFile(file, index)}
+					onclick={() => selectFile(file, index)}
 					class="w-full text-left p-2 rounded-md hover:bg-neutral-700 focus:outline-none text-sm"
 					class:bg-neutral-700={selectedIndex === index}
 				>

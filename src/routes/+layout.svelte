@@ -8,8 +8,9 @@
   import SettingsPopover from "../components/SettingModal.svelte";
   import { updateCode } from "$lib/code-store";
 
-  let showSettings = false;
-  let createFileDialogOpen = false;
+  let { children } = $props();
+  let showSettings = $state(false);
+  let createFileDialogOpen = $state(false);
 
   async function openFile(file: { name: string; type: string }): Promise<void> {
     try {
@@ -53,18 +54,19 @@
 </script>
 
 <div class="flex h-screen text-white font-sans">
-  <Sidebar on:createFile={() => (createFileDialogOpen = true)} bind:showSettings={showSettings} />
+  <Sidebar onCreateFile={() => (createFileDialogOpen = true)} showSettings={showSettings} />
   <main class="flex-grow overflow-y-auto bg-neutral-900 relative">
-    <slot></slot>
+    {@render children?.()}
   </main>
   <FileSelectDialog
     submitLabel="Open File"
-    on:fileSelected={handleFileSelected}
+    fileSelected={handleFileSelected}
+    close={() => {}}
   />
   <CreateFileDialog
-    bind:open={createFileDialogOpen}
-    on:createFile={handleCreateFile}
-    on:close={() => (createFileDialogOpen = false)}
+    open={createFileDialogOpen}
+    onCreateFile={handleCreateFile}
+    onClose={() => (createFileDialogOpen = false)}
   />
-  <SettingsPopover bind:show={showSettings} on:close={()=> showSettings = false} />
+  <SettingsPopover show={showSettings} onClose={()=> showSettings = false} />
 </div>

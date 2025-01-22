@@ -2,8 +2,9 @@ import { json } from "@sveltejs/kit";
 import path from "path";
 import { promises as fs } from "fs";
 import { supportedExtensions, resolveAndValidateFilePath } from "$lib/+serverUtils.js";
+import type { RequestHandler } from './$types';
 
-export async function GET(request) {
+export const GET: RequestHandler = async ({ request }) => {
   const url = new URL(request.url);
   const filePath = url.searchParams.get("file");
 

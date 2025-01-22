@@ -13,26 +13,41 @@
   import AddFileContext from "../components/AddFileContext.svelte";
   import { projectRoot } from "$lib/project-root-store";
 
-  let leftSize = 50;
-  let rightSize = 50;
-  let showAddFileContext = false;
-  let codeValue: CodeStoreType;
+
+const tutorialCode = `// Your code will be displayed here
+// Use keyboard shortcut Cmd+P or Ctrl+P to open any file
+// Use keyboard shortcut Cmd+S or Ctrl+S to save the file
+// Start chatting with your code to get started
+`;
+
+  let leftSize = $state(50);
+  let rightSize = $state(50);
+  let showAddFileContext = $state(false);
+  let codeValue: CodeStoreType = $state({
+    code: tutorialCode,
+    language: "typescript",
+    path: "",
+    fileName: "",
+    lastModified: new Date().toISOString(),
+    size: 0,
+    isDirty: false,
+  });
   let currentRoot: string;
 
-  $: if ($projectRoot !== currentRoot) {
-    currentRoot = $projectRoot;
-    resetCode();
-  }
+  // $: if ($projectRoot !== currentRoot) {
+  //   currentRoot = $projectRoot;
+  //   resetCode();
+  // }
 
-  $: {
-    codeValue = $codeStore;
-    if (codeValue?.path && !$filePaths.includes(codeValue.path)) {
-      filePaths.update((paths) => [...paths, codeValue.path]);
-    }
-  }
+  // $: {
+  //   codeValue = $codeStore;
+  //   if (codeValue?.path && !$filePaths.includes(codeValue.path)) {
+  //     filePaths.update((paths) => [...paths, codeValue.path]);
+  //   }
+  // }
 
   function handleCodeChange(event: CustomEvent<string>) {
-    updateCode({ ...codeValue, code: event.detail });
+    // updateCode({ ...codeValue, code: event.detail });
   }
 
   function getLanguage(value: CodeStoreType): string {
@@ -66,7 +81,7 @@
     <div class="h-full">
       <div class="flex items-center">
         {#if codeValue?.fileName}
-          <button on:click={resetCode} class="text-xs hover:text-rose-500 p-2"
+          <button onclick={resetCode} class="text-xs hover:text-rose-500 p-2"
             ><XIcon size={16} /></button
           >
         {/if}
@@ -77,10 +92,10 @@
         theme="vs-dark"
         value={codeValue?.code || ""}
         filePath={codeValue?.path}
-        on:change={handleCodeChange}
+        onCodeChange={handleCodeChange}
       />
     </div>
   </Pane>
 </PaneGroup>
 
-<AddFileContext bind:open={showAddFileContext} />
+<AddFileContext open={showAddFileContext} submitLabel="Add Files" />

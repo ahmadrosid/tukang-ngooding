@@ -2,6 +2,7 @@ import { json } from '@sveltejs/kit';
 import path from 'path';
 import { promises as fs } from 'fs';
 import { writeFile, getCurrentDirectory } from "$lib/+serverUtils";
+import type { RequestHandler } from './$types';
 
 const currentDirectory = getCurrentDirectory();
 
@@ -15,7 +16,8 @@ async function resolveFilePath(fileName: string): Promise<string> {
     return fullPath;
 }
 
-export const POST = async ({ request }: any) => {
+
+export const POST: RequestHandler = async ({ request }) => {
     const { fileName, content } = await request.json();
 
     if (!fileName) {

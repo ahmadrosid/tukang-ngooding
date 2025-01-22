@@ -1,21 +1,15 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
   import { createFile } from '$lib/api';
 
-  const dispatch = createEventDispatcher<{
-    createFile: { fileName: string; content: string };
-    close: void;
-  }>();
+  let { open, onCreateFile, onClose } = $props();
 
-  export let open = false;
-
-  let fileName = "";
-  let content = "";
-  let creating = false;
-  let error = "";
+  let fileName = $state("");
+  let content = $state("");
+  let creating = $state(false);
+  let error = $state("");
 
   function closeDialog(): void {
-    dispatch("close");
+    onClose();
     open = false;
     resetForm();
   }
@@ -27,7 +21,8 @@
     creating = false;
   }
 
-  async function handleCreateFile(): Promise<void> {
+  async function handleCreateFile(e: SubmitEvent): Promise<void> {
+    e.preventDefault();
     if (!fileName.trim()) {
       error = "File name is required";
       return;
@@ -37,8 +32,8 @@
     error = "";
 
     try {
-      const result = await createFile(fileName, content);
-      dispatch("createFile", { fileName, content });
+      await createFile(fileName, content);
+      onCreateFile({ fileName, content });
       closeDialog();
     } catch (err) {
       error = err instanceof Error ? err.message : String(err);
@@ -58,7 +53,7 @@
   >
     <div class="p-6">
       <h2 class="text-xl font-semibold mb-4 text-white">Create New File</h2>
-      <form on:submit|preventDefault={handleCreateFile}>
+      <form onsubmit={handleCreateFile}>
         <div class="mb-4">
           <label
             for="fileName"
@@ -92,7 +87,7 @@
         <div class="flex justify-end gap-2">
           <button
             type="button"
-            on:click={closeDialog}
+            onclick={closeDialog}
             class="px-4 py-2 bg-neutral-700 text-white rounded hover:bg-neutral-600 focus:outline-none text-sm"
           >
             Cancel

@@ -12,18 +12,16 @@
     type: "folder" | "file";
   }
 
-  export let open = false;
-  export let submitLabel: string | undefined = undefined;
+  let { open, submitLabel } = $props();
 
-  let allFiles: FileItem[] = [];
-
-  let selectedFiles: Set<string> = new Set();
-  let searchQuery = "";
-  let fuse: Fuse<FileItem>;
-  let displayedFiles: FileItem[] = [];
-  let loading = true;
-  let searchInput: HTMLInputElement;
-  let selectedIndex = -1;
+  let allFiles: FileItem[] = $state([]);
+  let selectedFiles: Set<string> = $state(new Set());
+  let searchQuery = $state("");
+  let fuse: Fuse<FileItem> = $state(new Fuse([], { keys: ["name"], threshold: 0.4 }));
+  let displayedFiles: FileItem[] = $state([]);
+  let loading = $state(true);
+  let searchInput: HTMLInputElement|null = $state(null);
+  let selectedIndex = $state(-1);
 
   onMount(() => {
     fetchFileTree().then((data) => {
@@ -115,28 +113,29 @@
     displayedFiles = [...allFiles];
   }
 
-  $: {
+  $effect(() => {
     if (searchQuery) {
       handleSearch();
     } else {
       displayedFiles = allFiles;
     }
-  }
+  });
 
-  $: if (open && searchInput) {
-    setTimeout(() => searchInput.focus(), 0);
-  }
+  $effect(() => {
+    if (open && searchInput) {
+      setTimeout(() => searchInput?.focus(), 0);
+    }
+  });
 
-  $: isFileSelected = (file: FileItem) => selectedFiles.has(file.name);
+  let isFileSelected = $derived((file: FileItem) => selectedFiles.has(file.name));
 
-  // Subscribe to changes in filePaths store
-  $: {
+  $effect(() => {
     selectedFiles = new Set($filePaths);
     if (allFiles.length > 0) {
       sortAllFiles();
       displayedFiles = [...allFiles];
     }
-  }
+  });
 </script>
 
 <div
@@ -156,7 +155,7 @@
         placeholder="Search files..."
         autocomplete="off"
         bind:value={searchQuery}
-        on:keydown={handleInputKeydown}
+        onkeydown={handleInputKeydown}
       />
     </div>
     <div
@@ -179,7 +178,7 @@
         {#each displayedFiles as file, index (file.name)}
           <li>
             <button
-              on:click={() => toggleFileSelection(file)}
+              onclick={() => toggleFileSelection(file)}
               class="w-full text-left p-2 rounded-md hover:bg-neutral-700 focus:outline-none text-sm flex items-center"
               class:bg-neutral-700={selectedIndex === index}
               class:bg-orange-700={isFileSelected(file)}
@@ -201,7 +200,7 @@
       <div class="flex items-center gap-2">
         {#if selectedFiles.size > 0}
           <button
-            on:click={clearSelectedFiles}
+            onclick={clearSelectedFiles}
             class="p-1 bg-neutral-700 text-white rounded hover:bg-neutral-600 focus:outline-none cursor-pointer flex items-center gap-1"
           >
             <X class="size-3" />
@@ -214,13 +213,13 @@
       </div>
       <div>
         <button
-          on:click={closeDialog}
+          onclick={closeDialog}
           class="px-4 py-2 bg-neutral-700 text-white rounded hover:bg-neutral-600 focus:outline-none cursor-pointer mr-2"
         >
           Close
         </button>
         <button
-          on:click={confirmSelection}
+          onclick={confirmSelection}
           class="px-4 py-2 bg-orange-800 text-white rounded hover:bg-orange-700 focus:outline-none cursor-pointer"
           disabled={selectedFiles.size === 0}
         >

@@ -1,21 +1,18 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
   import XIcon from "lucide-svelte/icons/x";
   import ProjectRootSelector from "./ProjectRootSetting.svelte";
   import LLMProviderSetting from "./LLMProviderSetting.svelte";
   import { fade } from "svelte/transition";
 
-  const dispatch = createEventDispatcher();
+  let { show, onClose } = $props();
 
-  export let show = false;
-
-  let systemPrompt: string = "";
-  let rootFolder: string = "";
-  let activeTab: "root" | "system" | "llm" = "root";
+  let systemPrompt: string = $state("");
+  let rootFolder: string = $state("");
+  let activeTab: "root" | "system" | "llm" = $state("root");
 
   function closePopover() {
     show = false;
-    dispatch("close");
+    onClose();
   }
 
   function saveSettings() {
@@ -32,13 +29,20 @@
   }
 </script>
 
-<svelte:window on:keydown={(e) => e.key === "Escape" && closePopover()} />
+<svelte:window onkeydown={(e) => e.key === "Escape" && closePopover()} />
 
 <div class:show class:hidden={!show}>
-  <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions (intentionally using div for overlay) -->
   <div
+    role="button"
+    tabindex="0"
     class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-    on:click|self={closePopover}
+    onclick={closePopover}
+    onkeydown={(e) => {
+      if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') {
+        closePopover();
+      }
+    }}
+    aria-label="Close settings modal"
   >
     <div
       class="bg-neutral-800 rounded-lg w-full max-w-[60vw] h-[80vh] shadow-lg flex"
@@ -53,7 +57,7 @@
           <li>
             <button
               class={`w-full text-left py-2 px-4 rounded text-sm ${activeTab === "root" ? "bg-neutral-700 text-white" : "text-gray-400 hover:bg-neutral-700 hover:text-white"}`}
-              on:click={() => setActiveTab("root")}
+              onclick={() => setActiveTab("root")}
             >
               Root
             </button>
@@ -61,7 +65,7 @@
           <li>
             <button
               class={`w-full text-left py-2 px-4 rounded text-sm ${activeTab === "system" ? "bg-neutral-700 text-white" : "text-gray-400 hover:bg-neutral-700 hover:text-white"}`}
-              on:click={() => setActiveTab("system")}
+              onclick={() => setActiveTab("system")}
             >
               System Prompt
             </button>
@@ -69,7 +73,7 @@
           <li>
             <button
               class={`w-full text-left py-2 px-4 rounded text-sm ${activeTab === "llm" ? "bg-neutral-700 text-white" : "text-gray-400 hover:bg-neutral-700 hover:text-white"}`}
-              on:click={() => setActiveTab("llm")}
+              onclick={() => setActiveTab("llm")}
             >
               LLM Provider
             </button>
@@ -81,7 +85,7 @@
       <div class="w-3/4 p-6 bg-neutral-700/40 rounded-r-lg relative overflow-auto scrollbar-hide">
         <div class="absolute top-6 right-6">
           <button
-            on:click={closePopover}
+            onclick={closePopover}
             class="text-gray-400 hover:text-white"
             aria-label="Close settings"
           >
@@ -90,7 +94,7 @@
         </div>
 
         {#if activeTab === "root"}
-          <ProjectRootSelector on:cancel={closePopover} on:updateRoot={closePopover} />
+          <ProjectRootSelector cancel={closePopover} updateRoot={closePopover} />
         {:else if activeTab === "system"}
           <div class="mb-4 space-y-2">
             <label
@@ -108,7 +112,7 @@
           </div>
           <div class="mt-6">
             <button
-              on:click={saveSettings}
+              onclick={saveSettings}
               class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
             >
               Save System Prompt
@@ -116,7 +120,8 @@
           </div>
         {:else if activeTab === "llm"}
           <LLMProviderSetting 
-            on:updateProvider={handleUpdateProvider}
+            updateProvider={handleUpdateProvider}
+            cancel={closePopover}
           />
         {/if}
       </div>

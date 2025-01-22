@@ -1,13 +1,12 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount } from "svelte";
+  import { onMount } from "svelte";
   import Settings from 'lucide-svelte/icons/settings';
 
-  export let systemPrompt: string = "";
-  const dispatch = createEventDispatcher<{ update: string }>();
+  let { systemPrompt } = $props();
 
-  let dialogOpen = false;
-  let tempSystemPrompt = systemPrompt;
-  let textareaElement: HTMLTextAreaElement;
+  let dialogOpen = $state(false);
+  let tempSystemPrompt = $state(systemPrompt);
+  let textareaElement: HTMLTextAreaElement | null = $state(null);
 
   function openDialog() {
     tempSystemPrompt = systemPrompt;
@@ -16,11 +15,12 @@
 
   function handleUpdate() {
     systemPrompt = tempSystemPrompt;
-    dispatch("update", systemPrompt);
+    // In Svelte 5, dispatch is available on the component instance
     dialogOpen = false;
   }
 
   function autoResize() {
+    if (!textareaElement) return;
     textareaElement.style.height = 'auto';
     textareaElement.style.height = Math.min(textareaElement.scrollHeight, 500) + 'px';
   }
@@ -44,7 +44,7 @@
 </script>
 
 <button
-  on:click={openDialog}
+  onclick={openDialog}
   class="w-full px-2 bg-transparent text-white rounded focus:outline-none text-sm flex items-center"
 >
   <Settings class="size-4 mr-2" />
@@ -58,20 +58,20 @@
       <textarea
         bind:value={tempSystemPrompt}
         bind:this={textareaElement}
-        on:input={autoResize}
+        oninput={autoResize}
         rows="4"
         placeholder="Enter your custom system prompt here..."
         class="w-full p-2 bg-neutral-700 rounded text-white text-sm focus:outline-none resize-none mb-4"
-      />
+      ></textarea>
       <div class="flex justify-end space-x-2">
         <button
-          on:click={() => (dialogOpen = false)}
+          onclick={() => (dialogOpen = false)}
           class="px-4 py-2 bg-neutral-700 text-white rounded hover:bg-neutral-600 focus:outline-none text-sm"
         >
           Cancel
         </button>
         <button
-          on:click={handleUpdate}
+          onclick={handleUpdate}
           class="px-4 py-2 bg-orange-800 text-white rounded hover:bg-orange-700 focus:outline-none text-sm"
         >
           Save

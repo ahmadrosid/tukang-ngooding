@@ -1,8 +1,9 @@
 import { json } from "@sveltejs/kit";
 import path from "path";
 import { resolveAndValidateFilePath, writeFile } from "$lib/+serverUtils.js";
+import type { RequestHandler } from "./$types";
 
-export async function PUT({ request }) {
+export const PUT: RequestHandler = async ({ request }) => {
   const body = await request.json();
   const { filePath, content } = body;
 

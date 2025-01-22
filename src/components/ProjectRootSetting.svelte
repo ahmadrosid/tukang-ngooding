@@ -2,14 +2,13 @@
   import { onMount } from "svelte";
   import FolderIcon from "lucide-svelte/icons/folder";
   import Trash from "lucide-svelte/icons/trash-2";
-  import { createEventDispatcher } from "svelte";
   import { projectRoot } from '$lib/project-root-store';
 
-  const dispatch = createEventDispatcher<{ updateRoot: string, cancel: void }>();
+  let { updateRoot, cancel } = $props();
 
-  let newRootFolder = "";
-  let error = "";
-  let recentRoots: string[] = [];
+  let newRootFolder = $state("");
+  let error = $state("");
+  let recentRoots = $state<string[]>([]);
 
   onMount(() => {
     const storedRoot = localStorage.getItem("projectRoot");
@@ -43,7 +42,7 @@
     });
     if (response.ok) {
       projectRoot.set(newRootFolder);
-      dispatch("updateRoot", newRootFolder);
+      updateRoot(newRootFolder);
       error = "";
     } else {
       error = "Failed to update project root.";
@@ -83,13 +82,13 @@
         {#each recentRoots as root}
           <li class="flex items-center justify-between">
             <button
-              on:click={() => selectRecentRoot(root)}
+              onclick={() => selectRecentRoot(root)}
               class="flex-grow text-left px-3 py-2 text-sm text-gray-300 bg-neutral-700/50 hover:text-white hover:bg-neutral-700 rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
             >
               <span class="truncate block">{root}</span>
             </button>
             <button
-              on:click={() => deleteRecentRoot(root)}
+              onclick={() => deleteRecentRoot(root)}
               class="ml-2 p-2 text-gray-400 hover:text-red-500 focus:outline-none"
               aria-label="Delete recent root"
             >
@@ -114,7 +113,7 @@
         placeholder="No folder selected"
       />
       <button
-        on:click={openFolderDialog}
+        onclick={openFolderDialog}
         class="bg-neutral-600 text-white rounded-r px-4 py-2 hover:bg-neutral-500 focus:outline-none"
       >
         <FolderIcon class="size-4" />
@@ -126,13 +125,13 @@
 
     <div class="flex justify-end mt-4 space-x-2">
       <button
-        on:click={() => dispatch('cancel')}
+        onclick={() => cancel()}
         class="px-4 py-1.5 bg-neutral-600 text-white rounded hover:bg-neutral-500 focus:outline-none text-sm"
       >
         Cancel
       </button>
       <button
-        on:click={handleUpdateRootFolder}
+        onclick={handleUpdateRootFolder}
         class="px-4 py-1.5 bg-orange-700 text-white rounded hover:bg-orange-600 focus:outline-none text-sm"
       >
         Save

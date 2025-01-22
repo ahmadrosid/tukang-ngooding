@@ -23,7 +23,7 @@
 >
   <div class="flex items-center gap-2">
     <button
-      on:click={handleAddFile}
+      onclick={handleAddFile}
       class="text-xs bg-neutral-700/50 text-neutral-200 rounded px-2 py-1 transition-colors duration-300 ease-in-out hover:bg-neutral-600 focus:outline-none flex items-center"
     >
       <PlusIcon class="mr-1 size-3" />
@@ -33,7 +33,7 @@
       <span>Context files:</span>
       {#if $filePaths.length > 1}
         <button
-          on:click={handleAddFile}
+          onclick={handleAddFile}
           class="font-semibold hover:underline cursor-pointer"
         >
           {$filePaths.length} files
@@ -49,7 +49,7 @@
 
   {#if messageCount > 1}
     <button
-      on:click={handleClearMessages}
+      onclick={handleClearMessages}
       class="text-xs text-neutral-400 rounded-lg px-2 py-1 transition-colors duration-300 ease-in-out hover:text-neutral-200 focus:outline-none flex items-center"
     >
       <Trash size={14} class="mr-1" />

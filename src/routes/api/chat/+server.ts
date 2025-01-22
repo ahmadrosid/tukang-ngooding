@@ -62,7 +62,7 @@ export const POST = (async ({ request }) => {
       },
     });
 
-    return result.toAIStreamResponse();
+    return result.toDataStreamResponse();
   }
 
   if (data.systemPrompt) {
@@ -72,7 +72,7 @@ export const POST = (async ({ request }) => {
       messages: newMessages,
       system: data.systemPrompt,
     });
-    return result.toAIStreamResponse();
+    return result.toDataStreamResponse();
   }
 
   const result = await streamText({
@@ -80,5 +80,5 @@ export const POST = (async ({ request }) => {
     messages: newMessages,
   });
 
-  return result.toAIStreamResponse();
+  return result.toDataStreamResponse();
 }) satisfies RequestHandler;

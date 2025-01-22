@@ -5,12 +5,12 @@
   import { fetchFileTree } from "$lib/api";
   import { projectRoot } from '$lib/project-root-store';
 
-  let error = "";
-  let tree: TreeNode = {
+  let error = $state("");
+  let tree: TreeNode = $state({
     label: "root",
     children: [],
     expanded: true,
-  };
+  });
 
   const treeMap: { [key: string]: TreeNode } = {};
 
@@ -22,7 +22,7 @@
       }
     }
   }
-  initTreeMap(tree);
+
 
   function rebuildChildren(
     node: TreeNode,
@@ -71,9 +71,6 @@
     tree = tree;
   }
 
-  // init the tree state
-  rebuildTree({ detail: { node: tree } }, false);
-
   async function refreshFileTree(root: string) {
     try {
         const result = await fetchFileTree(root);
@@ -100,14 +97,16 @@
   onMount(() => {
     currentRoot = $projectRoot;
     refreshFileTree(currentRoot);
+
+    initTreeMap(tree);
+    rebuildTree({ detail: { node: tree } }, false);
   });
 
-  $: if ($projectRoot !== currentRoot) {
-    currentRoot = $projectRoot;
+  $effect(() => {
     if (typeof window !== 'undefined') {
-      refreshFileTree(currentRoot);
+      refreshFileTree($projectRoot);
     }
-  }
+  });
 </script>
 
 <div class="py-2 -ml-4 text-sm max-h-[70vh] overflow-y-auto scrollbar-hide">
