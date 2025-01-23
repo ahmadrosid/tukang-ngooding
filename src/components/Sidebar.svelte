@@ -4,7 +4,7 @@
   import GithubIcon from "lucide-svelte/icons/github"; 
   import FileTree from "./FileTree.svelte";
 
-  let { onCreateFile, showSettings } = $props();
+  let { onCreateFile, showSettings = $bindable(false) } = $props();
 
   let isSidebarOpen: boolean = $state(true);
 
@@ -47,7 +47,7 @@
     </button>
     <div class="relative">
       <button
-        onclick={() => (showSettings = !showSettings)}
+        onclick={() => (showSettings = true)}
         class="p-2 bg-neutral-700 text-white rounded hover:bg-neutral-600/50 focus:outline-none"
       >
         <SettingsIcon class="size-4" />

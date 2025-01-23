@@ -33,19 +33,10 @@
 
 <div class:show class:hidden={!show}>
   <div
-    role="button"
-    tabindex="0"
-    class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-    onclick={closePopover}
-    onkeydown={(e) => {
-      if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') {
-        closePopover();
-      }
-    }}
-    aria-label="Close settings modal"
+    class="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50"
   >
     <div
-      class="bg-neutral-800 rounded-lg w-full max-w-[60vw] h-[80vh] shadow-lg flex"
+      class="bg-neutral-800 rounded-lg w-full max-w-[90vw] h-[90vh] shadow-lg flex border border-neutral-700"
       transition:fade={{ duration: 200 }}
     >
       <!-- Sidebar -->

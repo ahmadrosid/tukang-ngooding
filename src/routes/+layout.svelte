@@ -32,13 +32,13 @@
   }
 
   function handleFileSelected(
-    file: CustomEvent<{ name: string; type: string }>
+    file: CustomEvent<{ name: string; type: string }>,
   ) {
     openFile(file.detail);
   }
 
   function handleCreateFile(
-    event: CustomEvent<{ fileName: string; content: string }>
+    event: CustomEvent<{ fileName: string; content: string }>,
   ) {
     const { fileName, content } = event.detail;
     updateCode({
@@ -54,19 +54,23 @@
 </script>
 
 <div class="flex h-screen text-white font-sans">
-  <Sidebar onCreateFile={() => (createFileDialogOpen = true)} showSettings={showSettings} />
+  <Sidebar
+    onCreateFile={() => (createFileDialogOpen = true)}
+    bind:showSettings
+  />
   <main class="flex-grow overflow-y-auto bg-neutral-900 relative">
-    {@render children?.()}
+    <!-- {@render children?.()} -->
   </main>
+
   <FileSelectDialog
     submitLabel="Open File"
     fileSelected={handleFileSelected}
     close={() => {}}
   />
   <CreateFileDialog
-    open={createFileDialogOpen}
+    bind:open={createFileDialogOpen}
     onCreateFile={handleCreateFile}
     onClose={() => (createFileDialogOpen = false)}
   />
-  <SettingsPopover show={showSettings} onClose={()=> showSettings = false} />
+  <SettingsPopover show={showSettings} onClose={() => (showSettings = false)} />
 </div>

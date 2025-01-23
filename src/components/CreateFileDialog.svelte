@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createFile } from '$lib/api';
 
-  let { open, onCreateFile, onClose } = $props();
+  let { open = $bindable(false), onCreateFile, onClose } = $props();
 
   let fileName = $state("");
   let content = $state("");
@@ -42,14 +42,23 @@
     }
   }
 </script>
+<svelte:window onkeydown={(e) => e.key === "Escape" && closeDialog()} />
 
 <div
   class:hidden={!open}
   class:fixed={open}
-  class="inset-0 bg-black bg-opacity-50 flex items-center justify-center z-10"
+  class="inset-0 bg-black bg-opacity-60 flex items-center justify-center z-10"
 >
   <div
     class="bg-neutral-800 rounded-xl shadow-lg w-full max-w-xl ring-1 ring-neutral-700/70"
+    role="button"
+    tabindex="0"
+    aria-label="Close create file modal"
+    onkeydown={(e) => {
+      if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') {
+        closeDialog();
+      }
+    }}
   >
     <div class="p-6">
       <h2 class="text-xl font-semibold mb-4 text-white">Create New File</h2>

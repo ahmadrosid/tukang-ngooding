@@ -1,118 +1,54 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import Node from "./Node.svelte";
-  import { transformToTreeNodes, type TreeNode } from "$lib/file-utils";
-  import { fetchFileTree } from "$lib/api";
-  import { projectRoot } from '$lib/project-root-store';
+  // import { transformToTreeNodes, type TreeNode } from "$lib/file-utils";
+  // import { fetchFileTree } from "$lib/api";
+  // import { projectRoot } from '$lib/project-root-store';
 
-  let error = $state("");
-  let tree: TreeNode = $state({
-    label: "root",
-    children: [],
-    expanded: true,
-  });
+  // let error = $state("");
+  // let tree: TreeNode = $state({
+  //   label: "root",
+  //   children: [],
+  //   expanded: true,
+  // });
 
-  const treeMap: { [key: string]: TreeNode } = {};
+  // async function getFileTree(root: string) {
+  //   try {
+  //       const result = await fetchFileTree(root);
+  //       if (result) {
+  //           tree = {
+  //               label: result.rootFolder,
+  //               children: transformToTreeNodes(result),
+  //               expanded: true,
+  //           };
+  //           error = "";
+  //       } else {
+  //           error = "No files found."
+  //       }
+  //   } catch (e) {
+  //       error = "Error fetching file tree.";
+  //       console.error("Error fetching file tree:", e);
+  //   }
+  // }
 
-  function initTreeMap(node: TreeNode): void {
-    if (node.children) {
-      for (const child of node.children) {
-        treeMap[child.label] = node;
-        initTreeMap(child);
-      }
-    }
-  }
+  import TreeView from './TreeView.svelte'
 
-
-  function rebuildChildren(
-    node: TreeNode,
-    checkAsParent: boolean = true
-  ): void {
-    if (node.children) {
-      for (const child of node.children) {
-        if (checkAsParent) child.checked = !!node.checked;
-        rebuildChildren(child, checkAsParent);
-      }
-      node.indeterminate =
-        node.children.some((c) => c.indeterminate) ||
-        (node.children.some((c) => !!c.checked) &&
-          node.children.some((c) => !c.checked));
-    }
-  }
-
-  interface ToggleEvent {
-    detail: {
-      node: TreeNode;
-    };
-  }
-
-  function rebuildTree(e: ToggleEvent, checkAsParent: boolean = true): void {
-    const node = e.detail.node;
-    let parent = treeMap[node.label];
-    rebuildChildren(node, checkAsParent);
-    while (parent) {
-      const allCheck = parent.children?.every((c) => !!c.checked) ?? false;
-      if (allCheck) {
-        parent.indeterminate = false;
-        parent.checked = true;
-      } else {
-        const haveCheckedOrIndetermine =
-          parent.children?.some((c) => !!c.checked || c.indeterminate) ?? false;
-        if (haveCheckedOrIndetermine) {
-          parent.indeterminate = true;
-        } else {
-          parent.indeterminate = false;
-        }
-        parent.checked = false;
-      }
-
-      parent = treeMap[parent.label];
-    }
-    tree = tree;
-  }
-
-  async function refreshFileTree(root: string) {
-    try {
-        const result = await fetchFileTree(root);
-        if (result) {
-            tree = {
-                label: result.rootFolder,
-                children: transformToTreeNodes(result),
-                expanded: true,
-            };
-            error = "";
-            initTreeMap(tree);
-            rebuildTree({ detail: { node: tree } }, false);
-        } else {
-            error = "No files found."
-        }
-    } catch (e) {
-        error = "Error fetching file tree.";
-        console.error("Error fetching file tree:", e);
-    }
-  }
-
-  let currentRoot: string;
-
-  onMount(() => {
-    currentRoot = $projectRoot;
-    refreshFileTree(currentRoot);
-
-    initTreeMap(tree);
-    rebuildTree({ detail: { node: tree } }, false);
-  });
-
-  $effect(() => {
-    if (typeof window !== 'undefined') {
-      refreshFileTree($projectRoot);
-    }
-  });
+const tree = {
+  label: "USA", children: [
+    {label: "Florida", children: [
+      {label: "Jacksonville"},
+      {label: "Orlando", children: [
+        {label: "Disney World"},
+        {label: "Universal Studio"},
+        {label: "Sea World"},
+      ]},
+      {label: "Miami"},
+    ]},
+    {label: "California", children: [
+      {label: "San Francisco"},
+      {label: "Los Angeles"},
+      {label: "Sacramento"},
+    ]},
+  ],
+}
 </script>
 
-<div class="py-2 -ml-4 text-sm max-h-[70vh] overflow-y-auto scrollbar-hide">
-  {#if error}
-    <p class="text-red-500 px-4">{error}</p>
-  {:else}
-    <Node {tree} on:toggle={rebuildTree} />
-  {/if}
-</div>
+<TreeView {tree} />
